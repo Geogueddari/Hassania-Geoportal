@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { createTheme, styled } from '@mui/material/styles';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import MapIcon from '@mui/icons-material/Map';
+import ViewInArOutlinedIcon from '@mui/icons-material/ViewInArOutlined';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LayersIcon from '@mui/icons-material/Layers';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
+
+import Typography from '@mui/material/Typography';
 //import Grid from '@mui/material/Grid';
 
 
@@ -24,19 +26,19 @@ const NAVIGATION = [
   {
     segment: '2D',
     title: '2D',
-    icon: <DashboardIcon />,
+    icon: <MapIcon />,
   },
   {
     segment: '3D',
     title: '3D',
-    icon: <ShoppingCartIcon />,
+    icon: <ViewInArOutlinedIcon />,
   },
   {
     kind: 'divider',
   },
   {
     kind: 'header',
-    title: 'Analytics',
+    title: 'Layers',
   },
   {
     segment: 'reports',
@@ -107,6 +109,7 @@ export default function DashboardLayoutBasic(props) {
   // Remove this const when copying and pasting into your project.
   const demoWindow = window ? window() : undefined;
 
+
   return (
     <AppProvider
       navigation={NAVIGATION}
@@ -114,9 +117,22 @@ export default function DashboardLayoutBasic(props) {
       theme={demoTheme}
       window={demoWindow}
     >
-      <DashboardLayout>
+      <DashboardLayout
+        slots={{
+          appTitle: () => (
+            <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' , color:"rgb(25, 118, 210)", paddingTop:"5px" }}>
+              Jarar Maps
+            </Typography>
+          ),
+          sidebarFooter: () => (
+            <Typography variant="caption" component="div" sx={{ pl: 1, pb: 1 }}>
+              Powered by Geogueddari
+            </Typography>
+          ),
+        }}
+      >
         <PageContainer>
-          <Map/>
+          <Map />
         </PageContainer>
       </DashboardLayout>
     </AppProvider>
