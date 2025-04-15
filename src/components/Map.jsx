@@ -7,6 +7,9 @@ import TileLayer from 'ol/layer/Tile.js';
 import OSM from 'ol/source/OSM.js';
 import 'ol/ol.css';
 
+
+import ModeSwitchButton from "./ModeSwitchButton";
+
 export default function MapComponent() {
     const mapRef = useRef(null); // pour le DOM
     const olMapRef = useRef(null); // pour stocker l'objet Map
@@ -39,7 +42,9 @@ export default function MapComponent() {
                 overflow: "hidden",
                 boxShadow: "0 10px 20px rgba(16, 16, 16, 0.1)",
             }}
-        />
+        >
+    <ModeSwitchButton/>
+            </div>
 
     );
 } 
