@@ -11,7 +11,7 @@ export default function MapComponent() {
     const mapRef = useRef(null); // pour le DOM
     const olMapRef = useRef(null); // pour stocker l'objet Map
 
-    useEffect(() => {
+        useEffect(() => {
         if (!olMapRef.current) {
             olMapRef.current = new Map({
                 target: mapRef.current,
@@ -32,8 +32,9 @@ export default function MapComponent() {
         <div
             ref={mapRef}
             style={{
-                width: '100%',
+                width: 'calc(100% - 40px)',
                 height: '90%',
+                margin: '20px',
                 borderRadius: "10px",
                 overflow: "hidden",
                 boxShadow: "0 10px 20px rgba(16, 16, 16, 0.1)",
@@ -41,4 +42,4 @@ export default function MapComponent() {
         />
 
     );
-}
+} 
