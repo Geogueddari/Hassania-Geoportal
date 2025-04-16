@@ -2,22 +2,24 @@ import React, { useState } from 'react';
 import { Box, Popover, Typography } from '@mui/material';
 
 import RoadMap from "../assets/RoadMap.png"
-import Terrain from "../assets/Terrain.jpeg"
-import Satellite from "../assets/Satellite.jpeg"
-import OSM from "../assets/osm.jpg"
+import Terrain from "../assets/Terrain.png"
+import Satellite from "../assets/Satellite.png"
+import OSM from "../assets/osm.png"
+import Hybrid from "../assets/Hybrid.png"
 
 const basemaps = [
   { id: 'osm', backgroundImage: OSM},
   { id: 'Terrain', backgroundImage: Terrain },
   { id: 'Satellite', backgroundImage: Satellite },
-  { id: 'Terrain', backgroundImage: RoadMap },
-  { id: 'Hybrid', backgroundImage: Satellite },
+  { id: 'RoadMap', backgroundImage: RoadMap },
+  { id: 'Hybrid', backgroundImage: Hybrid },
 ];
 
-const BasemapSwitcher = ({onMapChange , selectedBasemap}) => {
+const BasemapSwitcher = ({onBaseMapChange , selectedBasemap}) => {
+  const currentMap = basemaps.find(map => map.id === selectedBasemap);
+  console.log(currentMap)
   const [anchorEl, setAnchorEl] = useState(null);
-    const [fond , setFond] = useState(OSM)
-  //const current = basemaps.find((b) => b.id === selectedBasemap);
+  const [baseMap , setBaseMap] = useState(currentMap.backgroundImage)
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -28,12 +30,11 @@ const BasemapSwitcher = ({onMapChange , selectedBasemap}) => {
   };
 
   const handleSelect = (id) => {
-    onMapChange(id);
-    handleClose();
+    onBaseMapChange(id);
 
     basemaps.forEach(map =>{
         if(map.id === id){
-            setFond(map.backgroundImage)
+          setBaseMap(map.backgroundImage)
         }
     })
   };
@@ -45,20 +46,20 @@ const BasemapSwitcher = ({onMapChange , selectedBasemap}) => {
       <Box
         onClick={handleClick}
         sx={{
-          width: 85,
-          height: 85,
-          padding: "5px",
-          border: '3px solid white',
+          width: 90,
+          height: 90,
+          p:1,
+          border: '3px solid rgb(144, 202, 249)',
           borderRadius: 1,
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           position: "absolute",
-          margin: "10px",
+          margin: "5px",
           bottom: "0px",
           zIndex: 1000,
-          backgroundImage: `url(${fond})`,
+          backgroundImage: `url(${baseMap})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
@@ -92,7 +93,7 @@ const BasemapSwitcher = ({onMapChange , selectedBasemap}) => {
             ml:1
         }}
       >
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1 , p: 1 ,backgroundColor: "rgb(144, 202, 249)"}}>
           {basemaps.map((b) => (
             <Box
               key={b.id}
@@ -110,15 +111,14 @@ const BasemapSwitcher = ({onMapChange , selectedBasemap}) => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 position: 'relative',
-                transition: 'transform 0.2s, border 0.2s',
+                transition: 'transform 0.2s linear, border 0.2s linear' ,
                 '&:hover': {
-                  transform: 'scale(1.05)',
-                  border: '5px solid #1976d2', // ou une autre couleur d’accent
-                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+                  transform: 'scale(1.1)',
+                  border: '3px solid rgb(144, 202, 249)',
+                  boxShadow: '5px 10px 20px rgba(0, 0, 0, 0.2)',
                 },
                 overflowY: "hidden"
               }}
-              
             >
               <Typography variant="caption"  sx={{
                     color: "black",

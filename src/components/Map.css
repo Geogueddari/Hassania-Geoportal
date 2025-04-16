@@ -1,0 +1,36 @@
+.ol-full-screen {
+    top: 50px;
+    right: 10px;
+    left: auto;
+}
+
+.ol-overviewmap {
+    top: 320px;
+    left: 8px;
+    height: 175px;
+    background-color: transparent;
+}
+
+.ol-scale-line {
+    background-color: rgba(255, 255, 255, 0.735);
+    bottom: 10px !important;
+    right: 10px !important;
+    left: auto;
+}
+
+.ol-attribution{
+    bottom: 5px !important;
+    left: 100px !important;
+    right:auto;
+}
+.ol-zoomslider {
+    top: 110px;
+    left: 8px;
+    background-color: rgba(255, 255, 255, 0.567);
+}
+
+.ol-zoom-to-extent {
+    top: 150px;
+    right: 10px;
+    left: auto;
+}
