@@ -1,17 +1,41 @@
 import * as React from 'react';
 import { createTheme, styled } from '@mui/material/styles';
-import MapIcon from '@mui/icons-material/Map';
-import ViewInArOutlinedIcon from '@mui/icons-material/ViewInArOutlined';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 
 import Typography from '@mui/material/Typography';
 //import Grid from '@mui/material/Grid';
 
-
+import {
+  // Icônes de base
+  School as SchoolIcon,
+  Map as MapIcon,
+  Engineering as EngineeringIcon,
+  Public as PublicIcon,
+  WbSunny as WbSunnyIcon,
+  ElectricBolt as ElectricBoltIcon,
+  HomeWork as HomeWorkIcon,
+  Home as HomeIcon,
+  Restaurant as RestaurantIcon,
+  Layers as LayersIcon,
+  MapOutlined as MapOutlinedIcon,
+  MiscellaneousServices as MiscellaneousServicesIcon,
+  LibraryBooks as LibraryBooksIcon,
+  LocalBar as LocalBarIcon,
+  AdminPanelSettings as AdminPanelSettingsIcon,
+  BarChart as BarChartIcon,
+  Description as DescriptionIcon,
+  
+  // Icônes sportives
+  SportsSoccer as SoccerIcon,
+  SportsVolleyball as VolleyIcon,
+  SportsBasketball as BasketballIcon,
+  SportsTennis as TennisIcon,
+  
+  // Icônes supplémentaires
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon
+} from '@mui/icons-material';
 
 
 
@@ -20,47 +44,192 @@ import Map from "./Map"
 const NAVIGATION = [
   {
     kind: 'header',
-    title: 'Map Type',
-  },
-  {
-    title: '2D',
-    segment: '2D',
-    icon: <MapIcon />,
-  },
-  {
-    segment: '3D',
-    title: '3D',
-    icon: <ViewInArOutlinedIcon />,
+    title: 'Lieux',
+    sx: { 
+      bgcolor: '#1a5276', 
+      color: 'white',
+      fontWeight: 'bold',
+      py: 1,
+      pl: 2,
+      borderRadius: 1
+    }
   },
   {
     kind: 'divider',
+    sx: { my: 1, borderColor: '#1a5276' }
   },
   {
-    kind: 'header',
-    title: 'Layers',
-  },
-  {
-    segment: 'reports',
-    title: 'Reports',
-    icon: <BarChartIcon />,
+    segment: 'formations',
+    title: 'Formations EHTP',
+    icon: <SchoolIcon color="primary" />,
     children: [
       {
-        segment: 'sales',
-        title: 'Sales',
-        icon: <DescriptionIcon />,
+        segment: 'sig',
+        title: 'SIG & Topographie',
+        icon: <LayersIcon />,
       },
       {
-        segment: 'traffic',
-        title: 'Traffic',
-        icon: <DescriptionIcon />,
+        segment: 'genie-civil',
+        title: 'Génie Civil',
+        icon: <EngineeringIcon />,
       },
+      {
+        segment: 'ihe',
+        title: 'IHE',
+        icon: <PublicIcon />,
+      },
+      {
+        segment: 'ive',
+        title: 'IVE',
+        icon: <PublicIcon />,
+      },
+      {
+        segment: 'meteo',
+        title: 'Météorologie',
+        icon: <WbSunnyIcon />,
+      },
+      {
+        segment: 'genie-electrique',
+        title: 'Génie Électrique',
+        icon: <ElectricBoltIcon />,
+      }
     ],
   },
   {
-    segment: 'integrations',
-    title: 'Integrations',
-    icon: <LayersIcon />,
+    segment: 'infrastructure',
+    title: 'Infrastructure',
+    icon: <HomeWorkIcon color="primary" />,
+    children: [
+      {
+        segment: 'dortoirs',
+        title: 'Dortoirs',
+        icon: <HomeIcon />,
+        children: [
+          {
+            segment: 'batiment-a',
+            title: 'Bâtiment A',
+            icon: <HomeIcon fontSize="small" />,
+          },
+          {
+            segment: 'batiment-b',
+            title: 'Bâtiment B',
+            icon: <HomeIcon fontSize="small" />,
+          },
+          {
+            segment: 'batiment-c',
+            title: 'Bâtiment C',
+            icon: <HomeIcon fontSize="small" />,
+          },
+          {
+            segment: 'batiment-d',
+            title: 'Bâtiment D',
+            icon: <HomeIcon fontSize="small" />,
+          },
+          {
+            segment: 'batiment-e',
+            title: 'Bâtiment E',
+            icon: <HomeIcon fontSize="small" />,
+          },
+          {
+            segment: 'batiment-f',
+            title: 'Bâtiment F',
+            icon: <HomeIcon fontSize="small" />,
+          }
+        ]
+      },
+      {
+        segment: 'restaurant',
+        title: 'Restaurant Universitaire',
+        icon: <RestaurantIcon />,
+      },
+      {
+        segment: 'amphis',
+        title: 'Amphithéâtres',
+        icon: <SchoolIcon />,
+        children: [
+          {
+            segment: 'amphi-1',
+            title: 'Amphithéâtre 1',
+            icon: <SchoolIcon fontSize="small" />,
+          },
+          {
+            segment: 'amphi-2',
+            title: 'Amphithéâtre 2',
+            icon: <SchoolIcon fontSize="small" />,
+          },
+          {
+            segment: 'amphi-3',
+            title: 'Amphithéâtre 3',
+            icon: <SchoolIcon fontSize="small" />,
+          },
+          {
+            segment: 'amphi-4',
+            title: 'Amphithéâtre 4',
+            icon: <SchoolIcon fontSize="small" />,
+          }
+        ]
+      },
+      {
+        segment: 'sport',
+        title: 'Terrains de Sport',
+        icon: <SoccerIcon />,
+        children: [
+          {
+            segment: 'terrain-foot',
+            title: 'Terrain de Football',
+            icon: <SoccerIcon fontSize="small" />,
+          },
+          {
+            segment: 'terrain-volley',
+            title: 'Terrain de Volley',
+            icon: <VolleyIcon fontSize="small" />,
+          },
+          {
+            segment: 'terrain-basket',
+            title: 'Terrain de Basketball',
+            icon: <BasketballIcon fontSize="small" />,
+          },
+          {
+            segment: 'terrain-tennis',
+            title: 'Terrain de Tennis',
+            icon: <TennisIcon fontSize="small" />,
+          }
+        ]
+      },
+      {
+        segment: 'salles-sig',
+        title: 'Salles SIG',
+        icon: <LayersIcon />,
+      },
+      {
+        segment: 'salles-gi',
+        title: 'Salles Géomatique',
+        icon: <MapOutlinedIcon />,
+      }
+    ],
   },
+  {
+    segment: 'services',
+    title: 'Services',
+    icon: <MiscellaneousServicesIcon color="primary" />,
+    children: [
+      {
+        segment: 'bibliotheque',
+        title: 'Bibliothèque',
+        icon: <LibraryBooksIcon />,
+      },
+      {
+        segment: 'buvette',
+        title: 'Buvette',
+        icon: <LocalBarIcon />,
+      },
+      {
+        segment: 'administration',
+        title: 'Administration',
+        icon: <AdminPanelSettingsIcon />,
+      }
+    ],
+  }
 ];
 
 const demoTheme = createTheme({
