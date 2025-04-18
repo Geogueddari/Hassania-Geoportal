@@ -2,20 +2,95 @@
     top: 50px;
     right: 10px;
     left: auto;
+    width: 35px !important;
+    height: 35px !important;
+}
+
+.ol-zoom{
+    width: 35px !important;
+    height: 35px !important;
+    border: none !important;
+}
+.ol-zoom-in ,
+.ol-zoom-out ,
+.ol-zoom-extent button,
+.ol-overviewmap button,
+.ol-full-screen button
+{
+    width: 100% !important;
+    height: 100% !important;
+    background-color: rgb(25, 118, 210) !important;
+    color: white !important;
+    cursor: pointer;
+    border:none !important;
+    transition:opacity 0.15s ease , background-color 0.3s ease;
+}
+
+.ol-zoomslider button{
+    width: 95% !important;
+    height:15px !important;
+    background-color: rgb(25, 118, 210) !important;
+    color: white !important;
+    cursor: pointer;
+    border:none !important;
+    transition:opacity 0.15s ease , background-color 0.3s ease;
+}
+
+.ol-zoom-in:hover ,
+.ol-zoom-out:hover,
+.ol-zoom-extent button:hover,
+.ol-zoomslider button:hover,
+.ol-overviewmap button:hover,
+.ol-full-screen button:hover{
+    background-color: #1565c0 !important;
+}
+.ol-zoom-in:active ,
+.ol-zoom-out:active,
+.ol-zoom-extent button:active,
+.ol-zoomslider button:active,
+.ol-overviewmap button:active,
+.ol-full-screen button:active{
+    opacity: 0.7;
 }
 
 .ol-overviewmap {
-    top: 320px;
+    top: 335px;
     left: 8px;
-    height: 175px;
-    background-color: transparent;
+    height: 35px;
+    background-color: transparent !important;
+    width:35px !important;
+    z-index: 1001 !important;
+}
+.ol-overviewmap-map {
+    position: absolute !important;
+    left: 40px !important;
+    z-index: 1001 !important;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    border:2px solid rgba(144, 202, 249) !important;
+    padding: 2px !important;
+    background-color:rgba(144, 202, 249) !important;
+}
+.ol-viewport{
+    border-radius: 8px !important;
+}
+.ol-overviewmap-box{
+    border : 3px solid white;
 }
 
 .ol-scale-line {
-    background-color: rgba(255, 255, 255, 0.735);
+    background-color:rgb(25, 118, 210) !important;;
     bottom: 10px !important;
     right: 10px !important;
     left: auto;
+    height: 30px !important;
+}
+.ol-scale-line-inner{
+    height: 22px !important;
+    color : white !important;
+    border: 2px solid white;
+    border-top : none;
+    font-size: 15px;
 }
 
 .ol-attribution{
@@ -24,13 +99,17 @@
     right:auto;
 }
 .ol-zoomslider {
-    top: 110px;
+    top: 130px;
     left: 8px;
-    background-color: rgba(255, 255, 255, 0.567);
+    background-color: rgba(144, 202, 249, 0.6);
+    width: 35px !important;
+    height: 200px !important;
+}
+.ol-zoom-extent {
+    top: 85px;
+    left: 8px;
+    right: auto;
+    width: 35px !important;
+    height: 35px !important;
 }
 
-.ol-zoom-to-extent {
-    top: 150px;
-    right: 10px;
-    left: auto;
-}

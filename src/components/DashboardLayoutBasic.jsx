@@ -1,7 +1,12 @@
 import * as React from 'react';
-import { createTheme, styled } from '@mui/material/styles';
+import { createTheme, useTheme } from '@mui/material/styles';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+import SearchBar from './SearchBar';
+import CloudCircleIcon from '@mui/icons-material/CloudCircle';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+
+import "./DashboardLayoutBasic.css"
 
 import Typography from '@mui/material/Typography';
 //import Grid from '@mui/material/Grid';
@@ -23,8 +28,6 @@ import {
   LibraryBooks as LibraryBooksIcon,
   LocalBar as LocalBarIcon,
   AdminPanelSettings as AdminPanelSettingsIcon,
-  BarChart as BarChartIcon,
-  Description as DescriptionIcon,
   
   // Icônes sportives
   SportsSoccer as SoccerIcon,
@@ -32,28 +35,53 @@ import {
   SportsBasketball as BasketballIcon,
   SportsTennis as TennisIcon,
   
-  // Icônes supplémentaires
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon
 } from '@mui/icons-material';
 
 
 
 import Map from "./Map"
 
+const demoTheme = createTheme({
+  colorSchemes: { light: true, dark: true },
+  cssVariables: {
+    colorSchemeSelector: 'class',
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 600,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
+  palette: {
+    mode: 'light',
+    background: {
+      default: '#F1F3F4', // beige
+      paper: '#e5e7eb',   // beige clair pour les composants sur fond 'paper'
+    },
+  },
+});
+
 const NAVIGATION = [
   {
+    kind:'header',
+    title:'Layers'
+  },
+  {
     kind: 'header',
-    title: 'Lieux',
+    title: <SearchBar demoTheme={demoTheme} />,
     sx: { 
       bgcolor: '#1a5276', 
       color: 'white',
       fontWeight: 'bold',
-      py: 1,
       pl: 2,
-      borderRadius: 1
-    }
+      pt:2,
+      borderRadius: 1,
+    },
   },
+
   {
     kind: 'divider',
     sx: { my: 1, borderColor: '#1a5276' }
@@ -232,21 +260,7 @@ const NAVIGATION = [
   }
 ];
 
-const demoTheme = createTheme({
-  colorSchemes: { light: true, dark: true },
-  cssVariables: {
-    colorSchemeSelector: 'class',
-  },
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 600,
-      lg: 1200,
-      xl: 1536,
-    },
-  },
-});
+
 
 function useDemoRouter(initialPath) {
   const [pathname, setPathname] = React.useState(initialPath);
@@ -271,6 +285,7 @@ function useDemoRouter(initialPath) {
 
 export default function DashboardLayoutBasic(props) {
   const { window } = props;
+  const mousePositionRef = React.useRef(null)
 
   const router = useDemoRouter('/dashboard');
 
@@ -280,26 +295,54 @@ export default function DashboardLayoutBasic(props) {
 
   return (
     <AppProvider
-      navigation={NAVIGATION}
       router={router}
       theme={demoTheme}
+      navigation={NAVIGATION}
       window={demoWindow}
     >
       <DashboardLayout
         slots={{
-          appTitle: () => (
-            <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' , color:"rgb(25, 118, 210)", paddingTop:"5px" }}>
-              Jarar Maps
+          appTitle: () => (<>
+            <CloudCircleIcon fontSize="large" color="primary" sx={{mr:1}}/> 
+            <Typography variant="h5" component="div" color="primary" sx={{ fontWeight: 'bold' , paddingTop:"5px" }}>
+            Jarar Maps
             </Typography>
+            <CheckCircleIcon color="success" fontSize="small" sx={{mt:"10px",ml:"10px"}}/>
+            </>
           ),
           sidebarFooter: () => (
             <Typography variant="caption" component="div" sx={{ pl: 1, pb: 1 }}>
               Powered by Geogueddari
             </Typography>
           ),
+
         }}
       >
-          <Map />
+
+<Typography variant="caption" component="div" ref={mousePositionRef}
+            sx={{
+                padding: "5px 10px",
+                borderRadius: "0px 0px 4px 4px",
+                fontSize: "18px",
+                display: "inline-flex", // ou "flex" selon ton besoin
+                alignItems: "center",
+                zIndex: 2000,
+                '&::before': {
+                    content: '"WGS : "',
+                    marginRight: '5px',
+                    fontWeight: 'bold',
+                    color: 'inherit',
+                },
+                backgroundColor:"rgb(25, 118, 210)",
+                color:"white"
+            }}
+          >
+            </Typography>
+
+          
+          <Map mousePositionRef={mousePositionRef}/>
+          
+            
       </DashboardLayout>
     </AppProvider>
   );

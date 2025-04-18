@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useTheme } from "@mui/material/styles";
 
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
@@ -17,23 +18,28 @@ import ZoomSlider from 'ol/control/ZoomSlider.js';
 import ZoomToExtent from 'ol/control/ZoomToExtent.js';
 import Attribution from 'ol/control/Attribution';
 import Zoom from 'ol/control/Zoom.js';
+import MousePosition from 'ol/control/MousePosition.js';
+import { createStringXY } from 'ol/coordinate';
+
 
 
 import ModeSwitchButton from "./ModeSwitchButton";
 import BaseMapSelector from "./BaseMapSelector";
 
-export default function MapComponent() {
+export default function MapComponent({mousePositionRef}) {
     const mapRef = useRef(null); // pour le DOM
     const olMapRef = useRef(null); // pour stocker l'objet Map
     const [selectedBasemap, setSelectedBasemap] = useState("Hybrid")
 
+      
+    
     useEffect(() => {
         if (!olMapRef.current) {
             olMapRef.current = new Map({
                 target: mapRef.current,
                 view: new View({
                     center: fromLonLat([-7.650399, 33.547345]), // coordonnées de casablanca
-                    zoom: 18,
+                    zoom: 17,
                 }),
 
                 layers: [
@@ -53,24 +59,90 @@ export default function MapComponent() {
                         collapsed: false
                     }),
                     new FullScreen({ source: mapRef.current }),
-                    new OverviewMap({
-                        layers: [
-                            new TileLayer({
-                                source: new OSM(),
-                            }),
-                        ],
-                    }),
+                    
                     new ScaleLine(),
                     new ZoomSlider(),
                     new ZoomToExtent({
-                        extent: fromLonLat([-7.660399, 33.540345]).concat(fromLonLat([-7.640399, 33.555345])),
-                    })
+                        extent: fromLonLat([-7.65641, 33.54505]).concat(fromLonLat([-7.64433, 33.54986])),
+                    }),
+                    new MousePosition({
+                        coordinateFormat: createStringXY(5),
+                        projection: 'EPSG:4326',
+                        target: mousePositionRef.current,
+                        className: 'custom-mouse-position',
+                        undefinedHTML: 'Coordonnées: N/A',
+                    })                    
                 ]
             });
+
+            
 
         }
     }, []);
 
+    useEffect(()=>{
+        let newBaseMap;
+        switch(selectedBasemap){
+            case "osm":
+        newBaseMap = new TileLayer({
+            source: new XYZ({
+                url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            }),
+        });
+
+        break;
+    case "Satellite":
+        newBaseMap = new TileLayer({
+            source: new XYZ({
+                url: 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+            }),
+        });
+        break;
+    case "Hybrid":
+        newBaseMap = new TileLayer({
+            source: new XYZ({
+                url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+            }),
+        });
+        break;
+    case "Terrain":
+        newBaseMap = new TileLayer({
+            source: new XYZ({
+                url: 'http://mt0.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
+            }),
+        });
+        break;
+    case "RoadMap":
+        newBaseMap = new TileLayer({
+            source: new XYZ({
+                url: 'http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+            }),
+        });
+        break;
+
+    default:
+        console.warn("Unknown basemap ID:", id);
+        return;
+}
+    const controls = olMapRef.current.getControls();
+    let oldOverviewControl = null;
+    controls.forEach((control) => {
+        if (control instanceof OverviewMap) {
+            oldOverviewControl = control;
+        }
+    });
+
+    if (oldOverviewControl) {
+        olMapRef.current.removeControl(oldOverviewControl);
+    }
+
+    // Créer une nouvelle mini-carte avec le nouveau fond de carte
+    const newOverview = new OverviewMap({
+        layers: [newBaseMap], // Utilise le fond de carte actuel
+    });
+
+    olMapRef.current.addControl(newOverview);
+    }, [selectedBasemap])
 
 
     function onBaseMapChange(id) {
@@ -142,20 +214,21 @@ export default function MapComponent() {
 
     return (
         <div
-            ref={mapRef}
-            style={{
-                width: 'calc(100% - 40px)',
-                height: '90%',
-                margin: '20px',
-                borderRadius: "10px",
-                overflow: "hidden",
-                boxShadow: "0 10px 20px rgba(16, 16, 16, 0.1)",
-                position: "relative"
-            }}
-        >
-            <ModeSwitchButton />
-            <BaseMapSelector onBaseMapChange={onBaseMapChange} selectedBasemap={selectedBasemap} />
-        </div>
+        ref={mapRef}
+        style={{
+            width: 'calc(100% - 40px)',
+            height: '90%',
+            margin: '20px',
+            borderRadius: "0px",
+            overflow: "hidden",
+            boxShadow: "0 10px 20px rgba(16, 16, 16, 0.1)",
+            position: "relative"
+        }}
+    >
+        <ModeSwitchButton />
+        <BaseMapSelector onBaseMapChange={onBaseMapChange} selectedBasemap={selectedBasemap} />
+    </div>
+    
 
     );
 } 

@@ -58,7 +58,7 @@ const BasemapSwitcher = ({onBaseMapChange , selectedBasemap}) => {
           position: "absolute",
           margin: "5px",
           bottom: "0px",
-          zIndex: 1000,
+          zIndex: 800,
           backgroundImage: `url(${baseMap})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
