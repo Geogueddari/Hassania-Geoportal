@@ -8,20 +8,19 @@ import DirectionsIcon from '@mui/icons-material/Directions';
 
 export default function CustomizedInputBase(props) {
 
-    console.log(props)
   return (
     <Paper
       component="form"
       sx={{
         display: 'flex',
         alignItems: 'center',
-        height: 33,
+        height: 40,
         width: 285,
         backgroundColor:
-        props.demoTheme.defaultColorScheme === 'light'
+          props.demoTheme.defaultColorScheme === 'light'
             ? '#f5f5f5'
             : 'rgb(18, 18, 18)',
-        marginTop:"5px"
+        marginTop: "5px"
       }}
     >
       <InputBase

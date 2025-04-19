@@ -4,13 +4,13 @@ import { styled } from '@mui/material/styles';
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import { keyframes } from '@mui/system';
 import Box from '@mui/material/Box';
- 
+
 const pulse = keyframes`
   0% { transform: scale(1); }
   50% { transform: scale(1.1); }
   100% { transform: scale(1); }
 `;
- 
+
 const StyledResetButton = styled(Button)(({ theme }) => ({
   background: 'linear-gradient(to right, #1565c0, #0d47a1)',
   color: 'white',
@@ -30,27 +30,27 @@ const StyledResetButton = styled(Button)(({ theme }) => ({
   overflow: 'hidden',
   transition: 'all 0.3s ease',
   zIndex: 1000,
- 
+
   '&:hover': {
     background: 'linear-gradient(to right, #0d47a1, #1565c0)',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
   },
- 
+
   '&:active': {
     transform: 'translateY(1px)',
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
   },
- 
+
   '& .MuiSvgIcon-root': {
     marginRight: theme.spacing(1),
     fontSize: '18px',
   },
- 
+
   '&:hover .MuiSvgIcon-root': {
     animation: `${pulse} 0.8s ease infinite`,
   },
 }));
- 
+
 export default function ResetButton({ margin }) {
   return (
     <Box sx={{
@@ -58,8 +58,7 @@ export default function ResetButton({ margin }) {
       justifyContent: 'center',
       width: '100%',
       ...margin,
-      zIndex:3000,
-      marginTop:"8px"
+      marginTop: "8px"
     }}>
       <StyledResetButton
         variant="contained"
@@ -71,4 +70,3 @@ export default function ResetButton({ margin }) {
     </Box>
   );
 }
- 

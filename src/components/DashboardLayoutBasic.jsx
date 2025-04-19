@@ -1,16 +1,12 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { createTheme} from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import SearchBar from './SearchBar';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-
-import "./DashboardLayoutBasic.css"
-
 import Typography from '@mui/material/Typography';
-//import Grid from '@mui/material/Grid';
 
 
 import {
@@ -46,14 +42,12 @@ import {
   AdminPanelSettings as AdminPanelSettingsIcon,
   BarChart as BarChartIcon,
   Description as DescriptionIcon,
-  
-  // Icônes sportives
+
   SportsSoccer as SoccerIcon,
   SportsVolleyball as VolleyIcon,
   SportsBasketball as BasketballIcon,
   SportsTennis as TennisIcon,
-  
-  // Icônes supplémentaires
+
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon
 } from '@mui/icons-material';
@@ -63,6 +57,8 @@ import {
 import Map from "./Map"
 import Checkbox from "./CheckBox.jsx"
 import ResetFilterButton from "./ResetFilterButton.jsx"
+
+import "./DashboardLayoutBasic.css"
 
 
 const demoTheme = createTheme({
@@ -88,24 +84,23 @@ const demoTheme = createTheme({
   },
 });
 
+
 const NAVIGATION = [
 
   {
     kind: 'header',
     title: <div className={"search-filter-container"}><SearchBar demoTheme={demoTheme} /><ResetFilterButton /> <p>LIEUX & SERVICES</p></div>,
-    sx: { 
-      bgcolor: '#1a5276', 
+    sx: {
+      bgcolor: '#1a5276',
       color: 'white',
       fontWeight: 'bold',
       pl: 2,
-      pt:2,
+      pt: 2,
       borderRadius: 1,
     },
   },
 
-{},{},
-
-
+  {}, {},
 
   {
     segment: 'formations',
@@ -117,7 +112,7 @@ const NAVIGATION = [
         title: 'SIG & Topographie',
         icon: <Checkbox />,
         children: [
-          { segment: 'sig-lab1', title: 'Laboratoire SIG 1', icon: <Checkbox size="small" /> },
+          { segment: 'sig-lab1', title: 'Laboratoire SIG 1', icon: <Checkbox size="small" /> , onclick: ()=>{console.log("clicked")}},
           { segment: 'sig-lab2', title: 'Laboratoire SIG 2', icon: <Checkbox size="small" /> },
           { segment: 'sig-terrain', title: 'Terrain d\'application', icon: <Checkbox size="small" /> },
         ]
@@ -134,11 +129,11 @@ const NAVIGATION = [
       },
       {
         segment: 'ihe',
-        title: 'Hydraulique & Environnement',
+        title: 'Hydraulique',
         icon: <Checkbox />,
         children: [
-          { segment: 'ihe-labo-eau', title: 'Laboratoire eau', icon: <Checkbox size="small" /> },
-          { segment: 'ihe-labo-env', title: 'Laboratoire environnement', icon: <Checkbox size="small" /> },
+          { segment: 'ihe-labo-eau', title: 'Labo Hydrolique', icon: <Checkbox size="small" /> },
+          { segment: 'ihe-labo-env', title: 'Labo environnement', icon: <Checkbox size="small" /> },
         ]
       },
       {
@@ -148,7 +143,7 @@ const NAVIGATION = [
         children: [
           { segment: 'ive-modelisation', title: 'Salle de modélisation', icon: <Checkbox size="small" /> },
           { segment: 'ive-salle-projet', title: 'Salle de projets', icon: <Checkbox size="small" /> },
-        ]  
+        ]
       },
       {
         segment: 'meteo',
@@ -157,7 +152,7 @@ const NAVIGATION = [
         children: [
           { segment: 'meteo-station', title: 'Station météo', icon: <Checkbox size="small" /> },
           { segment: 'meteo-labo', title: 'Laboratoire météo', icon: <Checkbox size="small" /> },
-        ]  
+        ]
       },
       {
         segment: 'genie-electrique',
@@ -167,7 +162,7 @@ const NAVIGATION = [
           { segment: 'ge-labo-elec', title: 'Laboratoire électricité', icon: <Checkbox size="small" /> },
           { segment: 'ge-labo-auto', title: 'Laboratoire automatismes', icon: <Checkbox size="small" /> },
           { segment: 'ge-labo-reseaux', title: 'Laboratoire réseaux', icon: <Checkbox size="small" /> },
-        ]  
+        ]
       },
       {
         segment: 'informatique',
@@ -176,7 +171,7 @@ const NAVIGATION = [
         children: [
           { segment: 'info-salle-tp', title: 'Salles TP', icon: <Checkbox size="small" /> },
           { segment: 'info-datacenter', title: 'Datacenter', icon: <Checkbox size="small" /> },
-        ]  
+        ]
       }
     ]
   },
@@ -221,7 +216,7 @@ const NAVIGATION = [
         segment: 'dortoirs',
         title: 'Résidences étudiantes',
         icon: <HomeIcon />,
-        children: ['a','b','c','d','e','f'].map((lettre) => ({
+        children: ['a', 'b', 'c', 'd', 'e', 'f'].map((lettre) => ({
           segment: `batiment-${lettre}`,
           title: `Bâtiment ${lettre.toUpperCase()}`,
           icon: <Checkbox size="small" />,
@@ -405,7 +400,7 @@ const NAVIGATION = [
 
 
 
-function useDemoRouter(initialPath) {
+function useRouter(initialPath) {
   const [pathname, setPathname] = React.useState(initialPath);
 
   const router = React.useMemo(() => {
@@ -418,13 +413,6 @@ function useDemoRouter(initialPath) {
 
   return router;
 }
-
-/* const Skeleton = styled('div')(({ theme, height }) => ({
-  backgroundColor: theme.palette.action.hover,
-  borderRadius: theme.shape.borderRadius,
-  height,
-  content: '" "',
-})); */
 
 
 function AccountSidebarPreview(props) {
@@ -442,15 +430,8 @@ function AccountSidebarPreview(props) {
 }
 
 AccountSidebarPreview.propTypes = {
-  /**
-   * The handler used when the preview is expanded
-   */
   handleClick: PropTypes.func,
   mini: PropTypes.bool.isRequired,
-  /**
-   * The state of the Account popover
-   * @default false
-   */
   open: PropTypes.bool,
 };
 
@@ -459,24 +440,26 @@ AccountSidebarPreview.propTypes = {
 const accounts = [
   {
     id: 1,
-    name: 'Bharat Kashyap',
-    email: 'bharatkashyap@outlook.com',
+    name: 'Abdeljabbar Elgaddari',
+    email: 'abdeljabbarelgaddari7@outlook.com',
     image: 'https://avatars.githubusercontent.com/u/19550456',
     projects: [
       {
         id: 3,
-        title: 'Project X',
+        title: 'Project B',
       },
     ],
   },
   {
     id: 2,
-    name: 'Bharat MUI',
-    email: 'bharat@mui.com',
-    color: '#8B4513', // Brown color
+    name: 'Bouazzaoui yassin',
+    email: 'bouazzaouiyassin@mui.com',
+    image: 'https://avatars.githubusercontent.com/u/19550456',
     projects: [{ id: 4, title: 'Project A' }],
   },
 ];
+
+
 
 function SidebarFooterAccountPopover() {
   return (
@@ -532,12 +515,14 @@ function SidebarFooterAccountPopover() {
   );
 }
 
+
 const createPreviewComponent = (mini) => {
   function PreviewComponent(props) {
     return <AccountSidebarPreview {...props} mini={mini} />;
   }
   return PreviewComponent;
 };
+
 
 function SidebarFooterAccount({ mini }) {
   const PreviewComponent = React.useMemo(() => createPreviewComponent(mini), [mini]);
@@ -585,10 +570,12 @@ SidebarFooterAccount.propTypes = {
   mini: PropTypes.bool.isRequired,
 };
 
-const demoSession = {
+
+
+const Session = {
   user: {
-    name: 'Bharat Kashyap',
-    email: 'bharatkashyap@outlook.com',
+    name: 'Abdeljabbar Elgaddari',
+    email: 'abdeljabarelgaddari7@outlook.com',
     image: 'https://avatars.githubusercontent.com/u/19550456',
   },
 };
@@ -604,16 +591,15 @@ export default function DashboardLayoutBasic(props) {
   const { window } = props;
   const mousePositionRef = React.useRef(null)
 
-  const router = useDemoRouter('/dashboard');
+  const router = useRouter('/dashboard');
 
-  // Remove this const when copying and pasting into your project.
   const demoWindow = window ? window() : undefined;
 
-  const [session, setSession] = React.useState(demoSession);
+  const [session, setSession] = React.useState(Session);
   const authentication = React.useMemo(() => {
     return {
       signIn: () => {
-        setSession(demoSession);
+        setSession(session);
       },
       signOut: () => {
         setSession(null);
@@ -633,12 +619,12 @@ export default function DashboardLayoutBasic(props) {
       <DashboardLayout
         slots={{
           appTitle: () => (<>
-            <TravelExploreIcon fontSize="large" color="primary" sx={{mr:1}}/> 
-            <Typography variant="h5" component="div" color="primary" sx={{ fontWeight: 'bold' , paddingTop:"5px" }}>
-            Jarar Maps
+            <TravelExploreIcon fontSize="large" color="primary" sx={{ mr: 1 }} />
+            <Typography variant="h5" component="div" color="primary" sx={{ fontWeight: 'bold', paddingTop: "5px" }}>
+              Jarar Maps
             </Typography>
-            <CheckCircleIcon color="success" fontSize="small" sx={{mt:"10px",ml:"10px"}}/>
-            </>
+            <CheckCircleIcon color="success" fontSize="small" sx={{ mt: "10px", ml: "10px" }} />
+          </>
           ),
           toolbarAccount: () => null,
           sidebarFooter: () => (
@@ -648,9 +634,9 @@ export default function DashboardLayoutBasic(props) {
         }}
       >
 
-          <Map mousePositionRef={mousePositionRef}/>
-          
-            
+        <Map mousePositionRef={mousePositionRef} />
+
+
       </DashboardLayout>
     </AppProvider>
   );

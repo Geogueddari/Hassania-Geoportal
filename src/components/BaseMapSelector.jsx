@@ -8,18 +8,17 @@ import OSM from "../assets/osm.png"
 import Hybrid from "../assets/Hybrid.png"
 
 const basemaps = [
-  { id: 'osm', backgroundImage: OSM},
+  { id: 'osm', backgroundImage: OSM },
   { id: 'Terrain', backgroundImage: Terrain },
   { id: 'Satellite', backgroundImage: Satellite },
   { id: 'RoadMap', backgroundImage: RoadMap },
   { id: 'Hybrid', backgroundImage: Hybrid },
 ];
 
-const BasemapSwitcher = ({onBaseMapChange , selectedBasemap}) => {
+const BasemapSwitcher = ({ onBaseMapChange, selectedBasemap }) => {
   const currentMap = basemaps.find(map => map.id === selectedBasemap);
-  console.log(currentMap)
   const [anchorEl, setAnchorEl] = useState(null);
-  const [baseMap , setBaseMap] = useState(currentMap.backgroundImage)
+  const [baseMap, setBaseMap] = useState(currentMap.backgroundImage)
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -32,10 +31,10 @@ const BasemapSwitcher = ({onBaseMapChange , selectedBasemap}) => {
   const handleSelect = (id) => {
     onBaseMapChange(id);
 
-    basemaps.forEach(map =>{
-        if(map.id === id){
-          setBaseMap(map.backgroundImage)
-        }
+    basemaps.forEach(map => {
+      if (map.id === id) {
+        setBaseMap(map.backgroundImage)
+      }
     })
   };
 
@@ -48,7 +47,7 @@ const BasemapSwitcher = ({onBaseMapChange , selectedBasemap}) => {
         sx={{
           width: 90,
           height: 90,
-          p:1,
+          p: 1,
           border: '3px solid rgb(144, 202, 249)',
           borderRadius: 1,
           cursor: 'pointer',
@@ -64,17 +63,17 @@ const BasemapSwitcher = ({onBaseMapChange , selectedBasemap}) => {
           backgroundPosition: 'center',
         }}
       >
-        <Typography variant="caption"  sx={{
-                    color: "black",
-                    position: "absolute",
-                    top: "0px",
-                    backgroundColor: "white",
-                    width: "100%",
-                    opacity: "0.8",
-                    textAlign: "center"
-              }}>
-                {selectedBasemap}
-              </Typography>
+        <Typography variant="caption" sx={{
+          color: "black",
+          position: "absolute",
+          top: "0px",
+          backgroundColor: "white",
+          width: "100%",
+          opacity: "0.8",
+          textAlign: "center"
+        }}>
+          {selectedBasemap}
+        </Typography>
       </Box>
 
       <Popover
@@ -82,18 +81,18 @@ const BasemapSwitcher = ({onBaseMapChange , selectedBasemap}) => {
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
+          vertical: 'bottom',
+          horizontal: 'right',
         }}
         transformOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
+          vertical: 'bottom',
+          horizontal: 'left',
         }}
         sx={{
-            ml:1
+          ml: 1
         }}
       >
-        <Box sx={{ display: 'flex', gap: 1 , p: 1 ,backgroundColor: "rgb(144, 202, 249)"}}>
+        <Box sx={{ display: 'flex', gap: 1, p: 1, backgroundColor: "rgb(144, 202, 249)" }}>
           {basemaps.map((b) => (
             <Box
               key={b.id}
@@ -111,7 +110,7 @@ const BasemapSwitcher = ({onBaseMapChange , selectedBasemap}) => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 position: 'relative',
-                transition: 'transform 0.2s linear, border 0.2s linear' ,
+                transition: 'transform 0.2s linear, border 0.2s linear',
                 '&:hover': {
                   transform: 'scale(1.1)',
                   border: '3px solid rgb(144, 202, 249)',
@@ -120,14 +119,14 @@ const BasemapSwitcher = ({onBaseMapChange , selectedBasemap}) => {
                 overflowY: "hidden"
               }}
             >
-              <Typography variant="caption"  sx={{
-                    color: "black",
-                    position: "absolute",
-                    top: "0px",
-                    backgroundColor: "white",
-                    width: "100%",
-                    opacity: "0.8",
-                    textAlign: "center"
+              <Typography variant="caption" sx={{
+                color: "black",
+                position: "absolute",
+                top: "0px",
+                backgroundColor: "white",
+                width: "100%",
+                opacity: "0.8",
+                textAlign: "center"
               }}>
                 {b.id}
               </Typography>

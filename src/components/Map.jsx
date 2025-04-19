@@ -1,15 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
+
 import Typography from '@mui/material/Typography';
 
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
 import { fromLonLat } from 'ol/proj';
 import TileLayer from 'ol/layer/Tile.js';
-import OSM from 'ol/source/OSM.js';
 import XYZ from 'ol/source/XYZ';
 import 'ol/ol.css';
 
-import './Map.css'
 
 import FullScreen from 'ol/control/FullScreen.js';
 import OverviewMap from 'ol/control/OverviewMap.js';
@@ -26,19 +25,23 @@ import { createStringXY } from 'ol/coordinate';
 import ModeSwitchButton from "./ModeSwitchButton";
 import BaseMapSelector from "./BaseMapSelector";
 
-export default function MapComponent({mousePositionRef}) {
-    const mapRef = useRef(null); // pour le DOM
-    const olMapRef = useRef(null); // pour stocker l'objet Map
+
+import './Map.css'
+
+
+export default function MapComponent({ mousePositionRef }) {
+    const mapRef = useRef(null);
+    const olMapRef = useRef(null);
     const [selectedBasemap, setSelectedBasemap] = useState("Hybrid")
 
-      
-    
+
+
     useEffect(() => {
         if (!olMapRef.current) {
             olMapRef.current = new Map({
                 target: mapRef.current,
                 view: new View({
-                    center: fromLonLat([-7.650399, 33.547345]), // coordonnées de casablanca
+                    center: fromLonLat([-7.650399, 33.547345]),
                     zoom: 17,
                 }),
 
@@ -51,15 +54,15 @@ export default function MapComponent({mousePositionRef}) {
                         }),
                     })
                 ],
-                
+
                 controls: [
                     new Zoom(),
                     new Attribution({
-                        collapsible: true, 
+                        collapsible: true,
                         collapsed: false
                     }),
                     new FullScreen({ source: mapRef.current }),
-                    
+
                     new ScaleLine(),
                     new ZoomSlider(),
                     new ZoomToExtent({
@@ -71,77 +74,78 @@ export default function MapComponent({mousePositionRef}) {
                         target: mousePositionRef.current,
                         className: 'custom-mouse-position',
                         undefinedHTML: 'Coordonnées: N/A',
-                    })                    
+                    })
                 ]
             });
 
-            
+
 
         }
     }, []);
 
-    useEffect(()=>{
+    useEffect(() => {
         let newBaseMap;
-        switch(selectedBasemap){
+        switch (selectedBasemap) {
             case "osm":
-        newBaseMap = new TileLayer({
-            source: new XYZ({
-                url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            }),
-        });
+                newBaseMap = new TileLayer({
+                    source: new XYZ({
+                        url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    }),
+                });
 
-        break;
-    case "Satellite":
-        newBaseMap = new TileLayer({
-            source: new XYZ({
-                url: 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-            }),
-        });
-        break;
-    case "Hybrid":
-        newBaseMap = new TileLayer({
-            source: new XYZ({
-                url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-            }),
-        });
-        break;
-    case "Terrain":
-        newBaseMap = new TileLayer({
-            source: new XYZ({
-                url: 'http://mt0.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
-            }),
-        });
-        break;
-    case "RoadMap":
-        newBaseMap = new TileLayer({
-            source: new XYZ({
-                url: 'http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-            }),
-        });
-        break;
+                break;
+            case "Satellite":
+                newBaseMap = new TileLayer({
+                    source: new XYZ({
+                        url: 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+                    }),
+                });
+                break;
+            case "Hybrid":
+                newBaseMap = new TileLayer({
+                    source: new XYZ({
+                        url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+                    }),
+                });
+                break;
+            case "Terrain":
+                newBaseMap = new TileLayer({
+                    source: new XYZ({
+                        url: 'http://mt0.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
+                    }),
+                });
+                break;
+            case "RoadMap":
+                newBaseMap = new TileLayer({
+                    source: new XYZ({
+                        url: 'http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+                    }),
+                });
+                break;
 
-    default:
-        console.warn("Unknown basemap ID:", id);
-        return;
-}
-    const controls = olMapRef.current.getControls();
-    let oldOverviewControl = null;
-    controls.forEach((control) => {
-        if (control instanceof OverviewMap) {
-            oldOverviewControl = control;
+            default:
+                console.warn("Unknown basemap ID:", id);
+                return;
         }
-    });
+        const controls = olMapRef.current.getControls();
+        let oldOverviewControl = null;
+        controls.forEach((control) => {
+            if (control instanceof OverviewMap) {
+                oldOverviewControl = control;
+            }
+        });
 
-    if (oldOverviewControl) {
-        olMapRef.current.removeControl(oldOverviewControl);
-    }
+        if (oldOverviewControl) {
+            olMapRef.current.removeControl(oldOverviewControl);
+        }
 
-    // Créer une nouvelle mini-carte avec le nouveau fond de carte
-    const newOverview = new OverviewMap({
-        layers: [newBaseMap], // Utilise le fond de carte actuel
-    });
 
-    olMapRef.current.addControl(newOverview);
+        const newOverview = new OverviewMap({
+            layers: [newBaseMap],
+        });
+
+        olMapRef.current.addControl(newOverview);
+
     }, [selectedBasemap])
 
 
@@ -206,7 +210,6 @@ export default function MapComponent({mousePositionRef}) {
                 return;
         }
 
-        // add the new base map
         layers.insertAt(0, newBaseMap);
         setSelectedBasemap(id)
     }
@@ -221,33 +224,30 @@ export default function MapComponent({mousePositionRef}) {
                 margin: '20px',
                 boxShadow: "0 10px 20px rgba(16, 16, 16, 0.1)",
                 position: "relative"
-        }}
-    >
-        <ModeSwitchButton />
-        <BaseMapSelector onBaseMapChange={onBaseMapChange} selectedBasemap={selectedBasemap} />
-        <Typography variant="caption" component="div" ref={mousePositionRef}
-            sx={{
-                position:"absolute",
-                bottom:"-40px",
-                padding: "5px 10px",
-                borderRadius: "0px 0px 4px 4px",
-                fontSize: "18px",
-                display: "inline-flex", // ou "flex" selon ton besoin
-                alignItems: "center",
-                '&::before': {
-                    content: '"WGS : "',
-                    marginRight: '5px',
-                    fontWeight: 'bold',
-                    color: 'inherit',
-                },
-                backgroundColor:"rgb(25, 118, 210)",
-                color:"white",
-
             }}
-          >
-      </Typography>
-    </div>
-    
-
+        >
+            <ModeSwitchButton />
+            <BaseMapSelector onBaseMapChange={onBaseMapChange} selectedBasemap={selectedBasemap} />
+            <Typography variant="caption" component="div" ref={mousePositionRef}
+                sx={{
+                    position: "absolute",
+                    bottom: "-40px",
+                    padding: "5px 10px",
+                    borderRadius: "0px 0px 4px 4px",
+                    fontSize: "18px",
+                    display: "inline-flex", // ou "flex" selon ton besoin
+                    alignItems: "center",
+                    '&::before': {
+                        content: '"WGS : "',
+                        marginRight: '5px',
+                        fontWeight: 'bold',
+                        color: 'inherit',
+                    },
+                    backgroundColor: "rgb(25, 118, 210)",
+                    color: "white",
+                }}
+            >
+            </Typography>
+        </div>
     );
 } 

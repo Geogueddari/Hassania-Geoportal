@@ -5,7 +5,7 @@ import ViewInArOutlinedIcon from '@mui/icons-material/ViewInArOutlined';
 
 const ModeSwitchButton = ({ on2DClick, on3DClick }) => {
   return (
-    <ButtonGroup variant="contained" color="primary"  style={{
+    <ButtonGroup variant="contained" color="primary" style={{
       position: "absolute",
       zIndex: 1000,
       right: "0px"
