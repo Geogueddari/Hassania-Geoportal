@@ -243,23 +243,36 @@ export default function MapComponent({ mousePositionRef }) {
       <BaseMapSelector onBaseMapChange={onBaseMapChange} selectedBasemap={selectedBasemap} />
       <ComboBox selectedProjection={selectedProjection} onChange={setSelectedProjection}
       />
-      <Typography
-        variant="caption"
-        component="div"
-        ref={mousePositionRef}
-        sx={{
-          position: "absolute",
-          bottom: "-40px",
-          left: "255px",
-          padding: "5px 10px",
-          borderRadius: "0px 0px 4px 4px",
-          fontSize: "18px",
-          display: "inline-flex",
-          alignItems: "center",
-          backgroundColor: "rgb(25, 118, 210)",
-          color: "white",
-        }}
-      />
+       <Typography
+      variant="caption"
+      component="div"
+      ref={mousePositionRef}
+      sx={{
+        position: "absolute",
+        bottom: "10px",
+        left: "265px", 
+        padding: "6px 14px",
+        borderRadius: "8px",
+        fontSize: "14px",
+        fontWeight: "500",
+        letterSpacing: "0.3px",
+        display: "inline-flex",
+        alignItems: "center",
+        backgroundColor: "white",
+        color: "#333",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+        border: "1px solid rgba(25, 118, 210, 0.2)",
+        fontFamily: "monospace",
+        zIndex: 1000,
+        "&::before": {
+          content: "'XY:'",
+          marginRight: "6px",
+          color: "rgb(25, 118, 210)",
+          fontWeight: "600",
+          fontSize: "12px"
+        }
+      }}
+    />
     </div>
   );
 }
