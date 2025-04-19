@@ -1,0 +1,10 @@
+.search-filter-container{
+    width:289px;
+    height:130px;
+    display:flex;
+    align-items:center;
+    justify-content:start;
+    flex-direction:column;
+    border-bottom: 1px solid gray;
+    background-color: #e5e7eb;
+}

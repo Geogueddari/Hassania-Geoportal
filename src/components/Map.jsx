@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useTheme } from "@mui/material/styles";
+import Typography from '@mui/material/Typography';
 
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
@@ -214,19 +214,38 @@ export default function MapComponent({mousePositionRef}) {
 
     return (
         <div
-        ref={mapRef}
-        style={{
-            width: 'calc(100% - 40px)',
-            height: '90%',
-            margin: '20px',
-            borderRadius: "0px",
-            overflow: "hidden",
-            boxShadow: "0 10px 20px rgba(16, 16, 16, 0.1)",
-            position: "relative"
+            ref={mapRef}
+            style={{
+                width: 'calc(100% - 40px)',
+                height: '90%',
+                margin: '20px',
+                boxShadow: "0 10px 20px rgba(16, 16, 16, 0.1)",
+                position: "relative"
         }}
     >
         <ModeSwitchButton />
         <BaseMapSelector onBaseMapChange={onBaseMapChange} selectedBasemap={selectedBasemap} />
+        <Typography variant="caption" component="div" ref={mousePositionRef}
+            sx={{
+                position:"absolute",
+                bottom:"-40px",
+                padding: "5px 10px",
+                borderRadius: "0px 0px 4px 4px",
+                fontSize: "18px",
+                display: "inline-flex", // ou "flex" selon ton besoin
+                alignItems: "center",
+                '&::before': {
+                    content: '"WGS : "',
+                    marginRight: '5px',
+                    fontWeight: 'bold',
+                    color: 'inherit',
+                },
+                backgroundColor:"rgb(25, 118, 210)",
+                color:"white",
+
+            }}
+          >
+      </Typography>
     </div>
     
 

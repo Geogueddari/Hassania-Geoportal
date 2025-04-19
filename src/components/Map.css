@@ -71,7 +71,11 @@
     padding: 2px !important;
     background-color:rgba(144, 202, 249) !important;
 }
+
 .ol-viewport{
+    border-radius: 8px 8px 8px 0px !important;
+}
+.ol-overviewmap-map .ol-viewport{
     border-radius: 8px !important;
 }
 .ol-overviewmap-box{

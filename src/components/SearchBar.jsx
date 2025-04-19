@@ -15,18 +15,19 @@ export default function CustomizedInputBase(props) {
       sx={{
         display: 'flex',
         alignItems: 'center',
-        height: 39,
-        width: 290,
+        height: 33,
+        width: 285,
         backgroundColor:
         props.demoTheme.defaultColorScheme === 'light'
             ? '#f5f5f5'
             : 'rgb(18, 18, 18)',
+        marginTop:"5px"
       }}
     >
       <InputBase
         sx={{ ml: 1, flex: 1, color: props.demoTheme.palette.text.primary }}
         placeholder="Search Places"
-        inputProps={{ 'aria-label': 'search google maps' }}
+        inputProps={{ 'aria-label': 'search places' }}
       />
       <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
         <SearchIcon />
