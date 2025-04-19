@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Typography from '@mui/material/Typography';
-
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
 import { fromLonLat } from 'ol/proj';
@@ -8,8 +7,10 @@ import TileLayer from 'ol/layer/Tile.js';
 import OSM from 'ol/source/OSM.js';
 import XYZ from 'ol/source/XYZ';
 import 'ol/ol.css';
-
-import './Map.css'
+import './Map.css';
+import proj4 from 'proj4';
+import { register } from 'ol/proj/proj4';
+import { get as getProjection } from 'ol/proj';
 
 import FullScreen from 'ol/control/FullScreen.js';
 import OverviewMap from 'ol/control/OverviewMap.js';
@@ -21,233 +22,227 @@ import Zoom from 'ol/control/Zoom.js';
 import MousePosition from 'ol/control/MousePosition.js';
 import { createStringXY } from 'ol/coordinate';
 
-
-
 import ModeSwitchButton from "./ModeSwitchButton";
 import BaseMapSelector from "./BaseMapSelector";
+import ComboBox from './ComboBox';
 
-export default function MapComponent({mousePositionRef}) {
-    const mapRef = useRef(null); // pour le DOM
-    const olMapRef = useRef(null); // pour stocker l'objet Map
-    const [selectedBasemap, setSelectedBasemap] = useState("Hybrid")
-
-      
-    
-    useEffect(() => {
-        if (!olMapRef.current) {
-            olMapRef.current = new Map({
-                target: mapRef.current,
-                view: new View({
-                    center: fromLonLat([-7.650399, 33.547345]), // coordonnées de casablanca
-                    zoom: 17,
-                }),
-
-                layers: [
-                    new TileLayer({
-                        source: new XYZ({
-                            url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-                            attributions: '© Google',
-                            maxZoom: 20,
-                        }),
-                    })
-                ],
-                
-                controls: [
-                    new Zoom(),
-                    new Attribution({
-                        collapsible: true, 
-                        collapsed: false
-                    }),
-                    new FullScreen({ source: mapRef.current }),
-                    
-                    new ScaleLine(),
-                    new ZoomSlider(),
-                    new ZoomToExtent({
-                        extent: fromLonLat([-7.65641, 33.54505]).concat(fromLonLat([-7.64433, 33.54986])),
-                    }),
-                    new MousePosition({
-                        coordinateFormat: createStringXY(5),
-                        projection: 'EPSG:4326',
-                        target: mousePositionRef.current,
-                        className: 'custom-mouse-position',
-                        undefinedHTML: 'Coordonnées: N/A',
-                    })                    
-                ]
-            });
-
-            
-
-        }
-    }, []);
-
-    useEffect(()=>{
-        let newBaseMap;
-        switch(selectedBasemap){
-            case "osm":
-        newBaseMap = new TileLayer({
+export default function MapComponent({ mousePositionRef }) {
+  const mapRef = useRef(null);
+  const olMapRef = useRef(null);
+  const [selectedBasemap, setSelectedBasemap] = useState("Hybrid");
+  const [selectedProjection, setSelectedProjection] = useState("EPSG:4326");
+  const mouseControlRef = useRef(null);
+  proj4.defs("EPSG:26191", "+proj=utm +zone=30 +ellps=clrk80 +towgs84=-146.43,112.74,-292.66,0,0,0,0 +units=m +no_defs");
+  register(proj4);
+  
+  useEffect(() => {
+    if (!olMapRef.current) {
+      olMapRef.current = new Map({
+        target: mapRef.current,
+        view: new View({
+          center: fromLonLat([-7.650399, 33.547345]),
+          zoom: 17,
+        }),
+        layers: [
+          new TileLayer({
             source: new XYZ({
-                url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+              attributions: '© Google',
+              maxZoom: 20,
             }),
-        });
+          })
+        ],
+        controls: []
+      });
 
-        break;
-    case "Satellite":
+      const controls = [
+        new Zoom(),
+        new Attribution({ collapsible: true, collapsed: false }),
+        new FullScreen({ source: mapRef.current }),
+        new ScaleLine(),
+        new ZoomSlider(),
+        new ZoomToExtent({
+          extent: fromLonLat([-7.65641, 33.54505]).concat(fromLonLat([-7.64433, 33.54986])),
+        }),
+      ];
+
+      controls.forEach(control => olMapRef.current.addControl(control));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mouseControlRef.current) {
+      olMapRef.current.removeControl(mouseControlRef.current);
+    }
+
+    const newMouseControl = new MousePosition({
+      coordinateFormat: createStringXY(5),
+      projection: selectedProjection,
+      target: mousePositionRef.current,
+      className: 'custom-mouse-position',
+      undefinedHTML: 'Coordonnées: N/A',
+    });
+
+    olMapRef.current.addControl(newMouseControl);
+    mouseControlRef.current = newMouseControl;
+  }, [selectedProjection]);
+
+  useEffect(() => {
+    let newBaseMap;
+    switch (selectedBasemap) {
+      case "osm":
         newBaseMap = new TileLayer({
-            source: new XYZ({
-                url: 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-            }),
-        });
-        break;
-    case "Hybrid":
-        newBaseMap = new TileLayer({
-            source: new XYZ({
-                url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-            }),
+          source: new XYZ({
+            url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          }),
         });
         break;
-    case "Terrain":
+      case "Satellite":
         newBaseMap = new TileLayer({
-            source: new XYZ({
-                url: 'http://mt0.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
-            }),
+          source: new XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+          }),
         });
         break;
-    case "RoadMap":
+      case "Hybrid":
         newBaseMap = new TileLayer({
-            source: new XYZ({
-                url: 'http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-            }),
+          source: new XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+          }),
         });
         break;
-
-    default:
-        console.warn("Unknown basemap ID:", id);
+      case "Terrain":
+        newBaseMap = new TileLayer({
+          source: new XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
+          }),
+        });
+        break;
+      case "RoadMap":
+        newBaseMap = new TileLayer({
+          source: new XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+          }),
+        });
+        break;
+      default:
+        console.warn("Unknown basemap ID:", selectedBasemap);
         return;
-}
+    }
+
     const controls = olMapRef.current.getControls();
     let oldOverviewControl = null;
     controls.forEach((control) => {
-        if (control instanceof OverviewMap) {
-            oldOverviewControl = control;
-        }
+      if (control instanceof OverviewMap) {
+        oldOverviewControl = control;
+      }
     });
 
     if (oldOverviewControl) {
-        olMapRef.current.removeControl(oldOverviewControl);
+      olMapRef.current.removeControl(oldOverviewControl);
     }
 
-    // Créer une nouvelle mini-carte avec le nouveau fond de carte
     const newOverview = new OverviewMap({
-        layers: [newBaseMap], // Utilise le fond de carte actuel
+      layers: [newBaseMap],
     });
 
     olMapRef.current.addControl(newOverview);
-    }, [selectedBasemap])
+  }, [selectedBasemap]);
 
-
-    function onBaseMapChange(id) {
-        const layers = olMapRef.current.getLayers();
-
-        if (layers.getLength() > 0) {
-            layers.removeAt(0); // remove actual base map
-        }
-
-        let newBaseMap;
-        switch (id) {
-            case "osm":
-                newBaseMap = new TileLayer({
-                    source: new XYZ({
-                        url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        attributions: '© OpenStreetMap contributors',
-                        maxZoom: 19,
-                    }),
-                });
-
-                break;
-            case "Satellite":
-                newBaseMap = new TileLayer({
-                    source: new XYZ({
-                        url: 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-                        attributions: '© Google',
-                        maxZoom: 20,
-                    }),
-                });
-                break;
-            case "Hybrid":
-                newBaseMap = new TileLayer({
-                    source: new XYZ({
-                        url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-                        attributions: '© Google',
-                        maxZoom: 20,
-                    }),
-                });
-                break;
-            case "Terrain":
-                newBaseMap = new TileLayer({
-                    source: new XYZ({
-                        url: 'http://mt0.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
-                        attributions: '© Google',
-                        maxZoom: 20,
-                    }),
-                });
-                break;
-            case "RoadMap":
-                newBaseMap = new TileLayer({
-                    source: new XYZ({
-                        url: 'http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-                        attributions: '© Google',
-                        maxZoom: 20,
-                    }),
-                });
-                break;
-
-            default:
-                console.warn("Unknown basemap ID:", id);
-                return;
-        }
-
-        // add the new base map
-        layers.insertAt(0, newBaseMap);
-        setSelectedBasemap(id)
+  function onBaseMapChange(id) {
+    const layers = olMapRef.current.getLayers();
+    if (layers.getLength() > 0) {
+      layers.removeAt(0);
     }
 
+    let newBaseMap;
+    switch (id) {
+      case "osm":
+        newBaseMap = new TileLayer({
+          source: new XYZ({
+            url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            attributions: '© OpenStreetMap contributors',
+            maxZoom: 19,
+          }),
+        });
+        break;
+      case "Satellite":
+        newBaseMap = new TileLayer({
+          source: new XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+            attributions: '© Google',
+            maxZoom: 20,
+          }),
+        });
+        break;
+      case "Hybrid":
+        newBaseMap = new TileLayer({
+          source: new XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+            attributions: '© Google',
+            maxZoom: 20,
+          }),
+        });
+        break;
+      case "Terrain":
+        newBaseMap = new TileLayer({
+          source: new XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
+            attributions: '© Google',
+            maxZoom: 20,
+          }),
+        });
+        break;
+      case "RoadMap":
+        newBaseMap = new TileLayer({
+          source: new XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+            attributions: '© Google',
+            maxZoom: 20,
+          }),
+        });
+        break;
+      default:
+        console.warn("Unknown basemap ID:", id);
+        return;
+    }
 
-    return (
-        <div
-            ref={mapRef}
-            style={{
-                width: 'calc(100% - 40px)',
-                height: '90%',
-                margin: '20px',
-                boxShadow: "0 10px 20px rgba(16, 16, 16, 0.1)",
-                position: "relative"
-        }}
+    layers.insertAt(0, newBaseMap);
+    setSelectedBasemap(id);
+  }
+
+  return (
+    <div
+      ref={mapRef}
+      style={{
+        width: 'calc(100% - 40px)',
+        height: '90%',
+        margin: '20px',
+        boxShadow: "0 10px 20px rgba(16, 16, 16, 0.1)",
+        position: "relative"
+      }}
     >
-        <ModeSwitchButton />
-        <BaseMapSelector onBaseMapChange={onBaseMapChange} selectedBasemap={selectedBasemap} />
-        <Typography variant="caption" component="div" ref={mousePositionRef}
-            sx={{
-                position:"absolute",
-                bottom:"-40px",
-                padding: "5px 10px",
-                borderRadius: "0px 0px 4px 4px",
-                fontSize: "18px",
-                display: "inline-flex", // ou "flex" selon ton besoin
-                alignItems: "center",
-                '&::before': {
-                    content: '"WGS : "',
-                    marginRight: '5px',
-                    fontWeight: 'bold',
-                    color: 'inherit',
-                },
-                backgroundColor:"rgb(25, 118, 210)",
-                color:"white",
-
-            }}
-          >
-      </Typography>
+      <ModeSwitchButton />
+      <BaseMapSelector onBaseMapChange={onBaseMapChange} selectedBasemap={selectedBasemap} />
+      <ComboBox selectedProjection={selectedProjection} onChange={setSelectedProjection} 
+      />
+      <Typography
+        variant="caption"
+        component="div"
+        ref={mousePositionRef}
+        sx={{
+          position: "absolute",
+          bottom: "-40px",
+          left: "255px",
+          padding: "5px 10px",
+          borderRadius: "0px 0px 4px 4px",
+          fontSize: "18px",
+          display: "inline-flex",
+          alignItems: "center",
+          backgroundColor: "rgb(25, 118, 210)",
+          color: "white",
+        }}
+      />
     </div>
-    
-
-    );
-} 
+  );
+}
