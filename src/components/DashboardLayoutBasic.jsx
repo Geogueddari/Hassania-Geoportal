@@ -118,8 +118,9 @@ const NAVIGATION = [
         segment: 'sig',
         title: 'SIG & Topographie',
         icon: <Checkbox />,
+        onclick: ()=>{console.log("clicked")},
         children: [
-          { segment: 'sig-lab1', title: 'Laboratoire SIG 1', icon: <Checkbox size="small" /> , onclick: ()=>{console.log("clicked")}},
+          { segment: 'sig-lab1', title: 'Laboratoire SIG 1', icon: <Checkbox size="small" /> },
           { segment: 'sig-lab2', title: 'Laboratoire SIG 2', icon: <Checkbox size="small" /> },
           { segment: 'sig-terrain', title: 'Terrain d\'application', icon: <Checkbox size="small" /> },
         ]

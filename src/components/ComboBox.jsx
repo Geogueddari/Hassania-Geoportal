@@ -28,7 +28,7 @@ export default function ComboBox({ selectedProjection, onChange }) {
       sx={{
         width: 320,
         position: "absolute",
-        bottom: "-50px",
+        bottom: "-55px",
         zIndex: 1000,
         transition: "all 0.3s ease",
         transform: open ? "translateY(-8px)" : "translateY(0)",

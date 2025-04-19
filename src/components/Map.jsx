@@ -249,8 +249,8 @@ export default function MapComponent({ mousePositionRef }) {
       ref={mousePositionRef}
       sx={{
         position: "absolute",
-        bottom: "10px",
-        left: "265px", 
+        bottom: "-45px",
+        left: "330px", 
         padding: "6px 14px",
         borderRadius: "8px",
         fontSize: "14px",
