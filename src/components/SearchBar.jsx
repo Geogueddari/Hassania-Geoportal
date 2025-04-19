@@ -19,18 +19,16 @@ export default function CustomizedInputBase(props) {
         alignItems: 'center',
         height: 34,
         width: 285,
-        backgroundColor:
-          props.demoTheme.defaultColorScheme === 'light'
-            ? '#f5f5f5'
-            : 'rgb(18, 18, 18)',
-        marginTop: "5px"
+        backgroundColor:"primary",
+        marginTop: "5px",
+        color:"primary"
       }}
     >
       <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
         <ResetFilterButton />
       </IconButton>
       <InputBase
-        sx={{ ml: 1, flex: 1, color: props.demoTheme.palette.text.primary }}
+        sx={{ ml: 1, flex: 1, color: "primary" }}
         placeholder="Search Places"
         inputProps={{ 'aria-label': 'search places' }}
       />

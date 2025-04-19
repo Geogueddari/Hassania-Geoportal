@@ -36,7 +36,7 @@ export default function ComboBox({ selectedProjection, onChange }) {
     >
       <Box
         sx={{
-          backgroundColor: "white",
+          backgroundColor: "primary",
           borderRadius: "12px",
           boxShadow: open 
             ? "0 10px 25px rgba(0,0,0,0.2)" 
