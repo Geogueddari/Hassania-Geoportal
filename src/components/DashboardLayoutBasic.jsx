@@ -56,7 +56,6 @@ import {
 
 import Map from "./Map"
 import Checkbox from "./CheckBox.jsx"
-import ResetFilterButton from "./ResetFilterButton.jsx"
 
 import "./DashboardLayoutBasic.css"
 
@@ -89,7 +88,7 @@ const NAVIGATION = [
 
   {
     kind: 'header',
-    title: <div className={"search-filter-container"}><SearchBar demoTheme={demoTheme} /><ResetFilterButton /> <p>LIEUX & SERVICES</p></div>,
+    title: <SearchBar demoTheme={demoTheme} /> ,
     sx: {
       bgcolor: '#1a5276',
       color: 'white',
@@ -99,8 +98,16 @@ const NAVIGATION = [
       borderRadius: 1,
     },
   },
+  {
+    kind:"divider",
+  },
+  {
+    kind: 'header',
+    title:<>LIEUX & SERVICES</>
 
-  {}, {},
+  },
+
+
 
   {
     segment: 'formations',
@@ -418,7 +425,7 @@ function useRouter(initialPath) {
 function AccountSidebarPreview(props) {
   const { handleClick, open, mini } = props;
   return (
-    <Stack direction="column" p={0}>
+    <Stack direction="column" sx={{paddingRight:"8px"}}>
       <Divider />
       <AccountPreview
         variant={mini ? 'condensed' : 'expanded'}
@@ -539,9 +546,9 @@ function SidebarFooterAccount({ mini }) {
           disableAutoFocus: true,
           slotProps: {
             paper: {
-              elevation: 0,
+              elevation: 1,
               sx: {
-                overflow: 'visible',
+                //overflow: 'visible',
                 filter: (theme) =>
                   `drop-shadow(0px 2px 8px ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.32)'})`,
                 mt: 1,
@@ -578,6 +585,8 @@ const Session = {
     email: 'abdeljabarelgaddari7@outlook.com',
     image: 'https://avatars.githubusercontent.com/u/19550456',
   },
+  sx:{width: 32,
+    height: 32,}
 };
 
 
