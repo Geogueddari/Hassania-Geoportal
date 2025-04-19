@@ -6,6 +6,9 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import DirectionsIcon from '@mui/icons-material/Directions';
 
+
+import ResetFilterButton from "./ResetFilterButton.jsx"
+
 export default function CustomizedInputBase(props) {
 
   return (
@@ -14,7 +17,7 @@ export default function CustomizedInputBase(props) {
       sx={{
         display: 'flex',
         alignItems: 'center',
-        height: 40,
+        height: 34,
         width: 285,
         backgroundColor:
           props.demoTheme.defaultColorScheme === 'light'
@@ -23,6 +26,9 @@ export default function CustomizedInputBase(props) {
         marginTop: "5px"
       }}
     >
+      <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
+        <ResetFilterButton />
+      </IconButton>
       <InputBase
         sx={{ ml: 1, flex: 1, color: props.demoTheme.palette.text.primary }}
         placeholder="Search Places"
