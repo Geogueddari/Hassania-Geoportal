@@ -56,6 +56,11 @@ import {
 
 import Map from "./Map"
 import Checkbox from "./CheckBox.jsx"
+import ContactLinks from './Contact'
+import ProjectContributors from './Contributer';
+
+
+
 
 import "./DashboardLayoutBasic.css"
 
@@ -77,15 +82,19 @@ const demoTheme = createTheme({
   palette: {
     mode: 'light',
     background: {
-      default: '#e5e7eb', // beige  
-      paper: '#e5e7eb',   // beige clair pour les composants sur fond 'paper' #F1F3F4
+      default: '#e5e7eb', 
+      paper: '#e5e7eb',   
     },
   },
 });
 
 
 const NAVIGATION = [
+  {
+    kind: 'header',
+    title:<>Faire des Recherches</>
 
+  },
   {
     kind: 'header',
     title: <SearchBar demoTheme={demoTheme} /> ,
@@ -106,9 +115,6 @@ const NAVIGATION = [
     title:<>LIEUX & SERVICES</>
 
   },
-
-
-
   {
     segment: 'formations',
     title: 'Formations EHTP',
@@ -634,19 +640,21 @@ export default function DashboardLayoutBasic(props) {
               Jarar Maps
             </Typography>
             <CheckCircleIcon color="success" fontSize="small" sx={{ mt: "10px", ml: "10px" }} />
-          </>
+          </>),
+          toolbarAccount: () => (
+            <ContactLinks 
+              githubUrl="https://github.com/Geogueddari/Hassania-Geoportal.git" 
+              linkedinUrl="https://www.linkedin.com/in/yassine-bouazzaoui-302345272" 
+              email="yassinebouazzaoui2003@gmail.com" 
+            />
           ),
-          toolbarAccount: () => null,
           sidebarFooter: () => (
             <SidebarFooterAccount />
           ),
-
         }}
       >
-
         <Map mousePositionRef={mousePositionRef} />
-
-
+        <ProjectContributors />
       </DashboardLayout>
     </AppProvider>
   );

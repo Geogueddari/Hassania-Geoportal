@@ -22,6 +22,8 @@ import Attribution from 'ol/control/Attribution';
 import Zoom from 'ol/control/Zoom.js';
 import MousePosition from 'ol/control/MousePosition.js';
 import { createStringXY } from 'ol/coordinate';
+import createBox from 'ol/interaction/Draw';
+
 
 import ModeSwitchButton from "./ModeSwitchButton";
 import BaseMapSelector from "./BaseMapSelector";
