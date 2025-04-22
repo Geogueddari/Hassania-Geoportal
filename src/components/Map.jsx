@@ -31,17 +31,18 @@ import ModeSwitchButton from "./ModeSwitchButton";
 import BaseMapSelector from "./BaseMapSelector";
 import ComboBox from './ComboBox';
 import Tools from './Tools.jsx';
+import PhotoPoints from './StreetView.jsx';
 
 import './Map.css';
 
 export default function MapComponent({ mousePositionRef }) {
   const mapRef = useRef(null);
-  const olMapRef = useRef(null);
+  const [olMap, setOlMap] = useState(null); // État pour stocker l'instance de la carte
   const [selectedBasemap, setSelectedBasemap] = useState("Hybrid");
   const [selectedProjection, setSelectedProjection] = useState("EPSG:4326");
   const mouseControlRef = useRef(null);
   
-  const measureSourceRef = useRef(null);
+  const measureSourceRef = useRef(new VectorSource());
   const measureLayerRef = useRef(null);
   const helpTooltipElementRef = useRef(null);
   const helpTooltipRef = useRef(null);
@@ -50,68 +51,6 @@ export default function MapComponent({ mousePositionRef }) {
   
   proj4.defs("EPSG:26191", "+proj=utm +zone=30 +ellps=clrk80 +towgs84=-146.43,112.74,-292.66,0,0,0,0 +units=m +no_defs");
   register(proj4);
-
-  useEffect(() => {
-    if (!olMapRef.current) {
-      measureSourceRef.current = new VectorSource();
-      
-      measureLayerRef.current = new VectorLayer({
-        source: measureSourceRef.current,
-        style: new Style({
-          fill: new Fill({
-            color: 'rgba(65, 122, 197, 0.2)',
-          }),
-          stroke: new Stroke({
-            color: 'rgba(25, 118, 210, 0.7)',
-            width: 2,
-          }),
-          image: new CircleStyle({
-            radius: 5,
-            stroke: new Stroke({
-              color: 'rgba(25, 118, 210, 0.9)',
-            }),
-            fill: new Fill({
-              color: 'rgba(255, 255, 255, 0.4)',
-            }),
-          }),
-        }),
-      });
-
-      olMapRef.current = new Map({
-        target: mapRef.current,
-        view: new View({
-          center: fromLonLat([-7.650399, 33.547345]),
-          zoom: 17,
-        }),
-        layers: [
-          new TileLayer({
-            source: new XYZ({
-              url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-              attributions: '© Google',
-              maxZoom: 20,
-            }),
-          }),
-          measureLayerRef.current
-        ],
-        controls: [
-          new Zoom(),
-          new Attribution({
-            collapsible: true,
-            collapsed: false
-          }),
-          new FullScreen({ source: mapRef.current }),
-          new ScaleLine(),
-          new ZoomSlider(),
-          new ZoomToExtent({
-            extent: fromLonLat([-7.65641, 33.54505]).concat(fromLonLat([-7.64433, 33.54986])),
-          })
-        ]
-      });
-      
-      createHelpTooltip();
-      createMeasureTooltip();
-    }
-  }, []);
 
   function createHelpTooltip() {
     if (helpTooltipElementRef.current) {
@@ -124,8 +63,8 @@ export default function MapComponent({ mousePositionRef }) {
       offset: [15, 0],
       positioning: 'center-left',
     });
-    if (olMapRef.current) {
-      olMapRef.current.addOverlay(helpTooltipRef.current);
+    if (olMap) {
+      olMap.addOverlay(helpTooltipRef.current);
     }
   }
 
@@ -142,12 +81,82 @@ export default function MapComponent({ mousePositionRef }) {
       stopEvent: false,
       insertFirst: false,
     });
-    if (olMapRef.current) {
-      olMapRef.current.addOverlay(measureTooltipRef.current);
+    if (olMap) {
+      olMap.addOverlay(measureTooltipRef.current);
     }
   }
+
+  // Initialisation de la carte
   useEffect(() => {
-    if (!olMapRef.current) return;
+    if (!mapRef.current || olMap) return;
+    
+    measureLayerRef.current = new VectorLayer({
+      source: measureSourceRef.current,
+      style: new Style({
+        fill: new Fill({
+          color: 'rgba(65, 122, 197, 0.2)',
+        }),
+        stroke: new Stroke({
+          color: 'rgba(25, 118, 210, 0.7)',
+          width: 2,
+        }),
+        image: new CircleStyle({
+          radius: 5,
+          stroke: new Stroke({
+            color: 'rgba(25, 118, 210, 0.9)',
+          }),
+          fill: new Fill({
+            color: 'rgba(255, 255, 255, 0.4)',
+          }),
+        }),
+      }),
+    });
+
+    const newMap = new Map({
+      target: mapRef.current,
+      view: new View({
+        center: fromLonLat([-7.650399, 33.547345]),
+        zoom: 17,
+      }),
+      layers: [
+        new TileLayer({
+          source: new XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+            attributions: '© Google',
+            maxZoom: 20,
+          }),
+        }),
+        measureLayerRef.current
+      ],
+      controls: [
+        new Zoom(),
+        new Attribution({
+          collapsible: true,
+          collapsed: false
+        }),
+        new FullScreen({ source: mapRef.current }),
+        new ScaleLine(),
+        new ZoomSlider(),
+        new ZoomToExtent({
+          extent: fromLonLat([-7.65641, 33.54505]).concat(fromLonLat([-7.64433, 33.54986])),
+        })
+      ]
+    });
+    
+    setOlMap(newMap);
+  }, []);
+
+  // Créer les tooltips après l'initialisation de la carte
+  useEffect(() => {
+    if (!olMap) return;
+    
+    createHelpTooltip();
+    createMeasureTooltip();
+  }, [olMap]);
+
+  // Mise à jour du basemap
+  useEffect(() => {
+    if (!olMap) return;
     
     let newBaseMap;
     switch (selectedBasemap) {
@@ -191,7 +200,7 @@ export default function MapComponent({ mousePositionRef }) {
         return;
     }
     
-    const controls = olMapRef.current.getControls();
+    const controls = olMap.getControls();
     let oldOverviewControl = null;
     controls.forEach((control) => {
       if (control instanceof OverviewMap) {
@@ -200,22 +209,23 @@ export default function MapComponent({ mousePositionRef }) {
     });
 
     if (oldOverviewControl) {
-      olMapRef.current.removeControl(oldOverviewControl);
+      olMap.removeControl(oldOverviewControl);
     }
 
     const newOverview = new OverviewMap({
       layers: [newBaseMap],
     });
 
-    olMapRef.current.addControl(newOverview);
+    olMap.addControl(newOverview);
 
-  }, [selectedBasemap]);
+  }, [selectedBasemap, olMap]);
 
+  // Mise à jour de la projection
   useEffect(() => {
-    if (!olMapRef.current) return;
+    if (!olMap) return;
     
     if (mouseControlRef.current) {
-      olMapRef.current.removeControl(mouseControlRef.current);
+      olMap.removeControl(mouseControlRef.current);
     }
 
     const newMouseControl = new MousePosition({
@@ -226,14 +236,14 @@ export default function MapComponent({ mousePositionRef }) {
       undefinedHTML: 'Coordonnées: N/A',
     });
 
-    olMapRef.current.addControl(newMouseControl);
+    olMap.addControl(newMouseControl);
     mouseControlRef.current = newMouseControl;
-  }, [selectedProjection]);
+  }, [selectedProjection, olMap]);
 
   function onBaseMapChange(id) {
-    if (!olMapRef.current) return;
+    if (!olMap) return;
     
-    const layers = olMapRef.current.getLayers();
+    const layers = olMap.getLayers();
 
     if (layers.getLength() > 0) {
       layers.removeAt(0); 
@@ -300,9 +310,9 @@ export default function MapComponent({ mousePositionRef }) {
       measureSourceRef.current.clear();
     }
     
-    if (!olMapRef.current) return;
+    if (!olMap) return;
     
-    const overlays = olMapRef.current.getOverlays().getArray();
+    const overlays = olMap.getOverlays().getArray();
     const overlaysToRemove = [];
     
     overlays.forEach(overlay => {
@@ -313,7 +323,7 @@ export default function MapComponent({ mousePositionRef }) {
     });
     
     overlaysToRemove.forEach(overlay => {
-      olMapRef.current.removeOverlay(overlay);
+      olMap.removeOverlay(overlay);
     });
     
     createMeasureTooltip();
@@ -337,19 +347,23 @@ export default function MapComponent({ mousePositionRef }) {
         selectedProjection={selectedProjection} 
         onChange={setSelectedProjection}
       />
-
-      {olMapRef.current && (
-        <Tools 
-          map={olMapRef.current} 
-          measureSourceRef={measureSourceRef} 
-          clearMeasurements={clearMeasurements}
-          helpTooltipElementRef={helpTooltipElementRef}
-          helpTooltipRef={helpTooltipRef}
-          measureTooltipElementRef={measureTooltipElementRef}
-          measureTooltipRef={measureTooltipRef}
-          createHelpTooltip={createHelpTooltip}
-          createMeasureTooltip={createMeasureTooltip}
-        />
+   
+      {/* Rendre les composants dès que olMap est disponible */}
+      {olMap && (
+        <>
+          <Tools 
+            map={olMap} 
+            measureSourceRef={measureSourceRef} 
+            clearMeasurements={clearMeasurements}
+            helpTooltipElementRef={helpTooltipElementRef}
+            helpTooltipRef={helpTooltipRef}
+            measureTooltipElementRef={measureTooltipElementRef}
+            measureTooltipRef={measureTooltipRef}
+            createHelpTooltip={createHelpTooltip}
+            createMeasureTooltip={createMeasureTooltip}
+          />
+          <PhotoPoints map={olMap} />
+        </>
       )}
 
       <Typography

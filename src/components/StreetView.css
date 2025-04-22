@@ -1,0 +1,97 @@
+/* Styles existants dans Map.css */
+
+/* Styles pour l'animation du bouton PhotoPoints */
+.photo-points-btn {
+    transition: all 0.3s ease;
+  }
+  
+  .photo-points-btn:hover {
+    transform: scale(1.05);
+  }
+  
+  .photo-points-btn.active {
+    background-color: #1976d2 !important;
+    color: white !important;
+  }
+  
+  /* Animation pour les marqueurs de point */
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  .ol-photo-point-marker {
+    animation: bounce 1s ease infinite;
+    transform-origin: bottom center;
+  }
+  
+  /* Styles pour l'overlay des points photos */
+  .photo-point-tooltip {
+    position: absolute;
+    padding: 6px 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    color: #1976d2;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1000;
+    transform: translate(-50%, -120%);
+  }
+  
+  .photo-point-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.9) transparent transparent;
+  }
+  
+  /* Styles pour la galerie d'images */
+  .photo-gallery {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+  }
+  
+  .photo-gallery-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .photo-gallery-thumbnails {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    gap: 8px;
+    background-color: #f5f5f5;
+  }
+  
+  .photo-gallery-thumbnail {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .photo-gallery-thumbnail.active {
+    border-color: #1976d2;
+  }
+  
+  .photo-gallery-thumbnail:hover {
+    opacity: 0.8;
+  }
