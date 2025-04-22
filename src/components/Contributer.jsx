@@ -134,15 +134,15 @@ const ProjectContributors = () => {
       email: 'abdeljabbarelgaddari7@outlook.com',
       github: 'https://github.com/AbdeljabarELGaDDaRi',
       linkedin: 'https://www.linkedin.com/in/Geogueddari',
-      image: 'src/assets/abdeljabbar.jpg',
+      image: '/src/assets/Abdeljabbar.jpg',
     },
     {
-      name: 'Yassin Bouazzaoui',
+      name: 'Yassine Bouazzaoui',
       role: 'UX Designer',
       email: 'bouazzaouiyassin@mui.com',
       github: 'https://github.com/yassinbouazzaoui',
       linkedin: 'https://www.linkedin.com/in/yassine-bouazzaoui-302345272',
-      image: 'src/assets/yassine.jpg',
+      image: '/src/assets/Yassine.jpg',
     },
   ];
 
