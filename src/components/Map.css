@@ -1,3 +1,50 @@
+/* Styles pour ol-cesium */
+.ol-viewport .ol-overlaycontainer-stopevent {
+  /* Assurer que les overlays fonctionnent en 3D */
+  pointer-events: auto;
+}
+
+/* Masquer les contrôles OpenLayers en mode 3D si nécessaire */
+.cesium-widget-credits {
+  display: none !important;
+}
+
+.cesium-viewer-bottom {
+  display: none !important;
+}
+.ol-control {
+    background-color: transparent;
+    border-radius: 8px;
+    padding: 0;
+    position: absolute;
+    transition: all 0.3s ease;
+  }
+  
+  .ol-control button {
+    background-color: rgba(25, 118, 210, 0.9) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .ol-control button:hover {
+    background-color: rgba(30, 136, 229, 0.95) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  }
+  
+  .ol-control button:active {
+    background-color: rgba(21, 101, 192, 1) !important;
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
 .ol-full-screen {
     top: 60px;
     right: 10px;

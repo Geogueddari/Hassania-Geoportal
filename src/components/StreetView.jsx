@@ -49,7 +49,7 @@ const pointsData = [
     id: 5,
     name: "Centre de Conférence EHTP",
     coordinates: [-7.65124, 33.54777],
-    images: ["/images/conference_1.jpg", "/images/conference_2.jpg"]
+    images: ["/src/assets/Campus.jpg", "/images/conference_2.jpg"]
   }
 ];
 

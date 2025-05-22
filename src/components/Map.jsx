@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-
 import Typography from '@mui/material/Typography';
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
@@ -8,11 +7,15 @@ import TileLayer from 'ol/layer/Tile.js';
 import XYZ from 'ol/source/XYZ';
 import 'ol/ol.css';
 
-import './Map.css';
 import proj4 from 'proj4';
 import { register } from 'ol/proj/proj4';
-import { get as getProjection } from 'ol/proj';
+import { createStringXY } from 'ol/coordinate';
+import VectorSource from 'ol/source/Vector';
+import VectorLayer from 'ol/layer/Vector';
+import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style';
+import Overlay from 'ol/Overlay';
 
+// Controls
 import FullScreen from 'ol/control/FullScreen.js';
 import OverviewMap from 'ol/control/OverviewMap.js';
 import ScaleLine from 'ol/control/ScaleLine.js';
@@ -21,12 +24,11 @@ import ZoomToExtent from 'ol/control/ZoomToExtent.js';
 import Attribution from 'ol/control/Attribution';
 import Zoom from 'ol/control/Zoom.js';
 import MousePosition from 'ol/control/MousePosition.js';
-import { createStringXY } from 'ol/coordinate';
-import VectorSource from 'ol/source/Vector';
-import VectorLayer from 'ol/layer/Vector';
-import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style';
-import Overlay from 'ol/Overlay';
 
+// ol-cesium
+import OLCesium from 'olcs';
+
+// Components
 import ModeSwitchButton from "./ModeSwitchButton";
 import BaseMapSelector from "./BaseMapSelector";
 import ComboBox from './ComboBox';
@@ -35,24 +37,54 @@ import PhotoPoints from './StreetView.jsx';
 
 import './Map.css';
 
+// Constants
+const PROJECTIONS = {
+  EPSG4326: "EPSG:4326",
+  EPSG26191: "EPSG:26191"
+};
+
+const BASEMAPS = {
+  OSM: "osm",
+  SATELLITE: "Satellite",
+  HYBRID: "Hybrid",
+  TERRAIN: "Terrain",
+  ROADMAP: "RoadMap"
+};
+
+const MAP_CONFIG = {
+  defaultCenter: [-7.650399, 33.547345],
+  defaultZoom: 17,
+  extent: fromLonLat([-7.65641, 33.54505]).concat(fromLonLat([-7.64433, 33.54986]))
+};
+
 export default function MapComponent({ mousePositionRef }) {
+  // Map state
   const mapRef = useRef(null);
-  const [olMap, setOlMap] = useState(null); // État pour stocker l'instance de la carte
-  const [selectedBasemap, setSelectedBasemap] = useState("Hybrid");
-  const [selectedProjection, setSelectedProjection] = useState("EPSG:4326");
-  const mouseControlRef = useRef(null);
+  const [olMap, setOlMap] = useState(null);
+  const [selectedBasemap, setSelectedBasemap] = useState(BASEMAPS.HYBRID);
+  const [selectedProjection, setSelectedProjection] = useState(PROJECTIONS.EPSG4326);
   
+  // 3D state
+  const [ol3d, setOl3d] = useState(null);
+  const [is3DMode, setIs3DMode] = useState(false);
+  
+  // Controls and overlays
+  const mouseControlRef = useRef(null);
   const measureSourceRef = useRef(new VectorSource());
   const measureLayerRef = useRef(null);
   const helpTooltipElementRef = useRef(null);
   const helpTooltipRef = useRef(null);
   const measureTooltipElementRef = useRef(null);
   const measureTooltipRef = useRef(null);
-  
-  proj4.defs("EPSG:26191", "+proj=utm +zone=30 +ellps=clrk80 +towgs84=-146.43,112.74,-292.66,0,0,0,0 +units=m +no_defs");
-  register(proj4);
 
-  function createHelpTooltip() {
+  // Initialize projection
+  useEffect(() => {
+    proj4.defs(PROJECTIONS.EPSG26191, "+proj=lcc +lat_1=33.3 +lat_2=35.9 +lat_0=32.5 +lon_0=-5 +x_0=500000 +y_0=300000 +ellps=clrk80 +units=m +no_defs");
+    register(proj4);
+  }, []);
+
+  // Tooltip creation functions
+  const createHelpTooltip = () => {
     if (helpTooltipElementRef.current) {
       helpTooltipElementRef.current.parentNode.removeChild(helpTooltipElementRef.current);
     }
@@ -66,9 +98,9 @@ export default function MapComponent({ mousePositionRef }) {
     if (olMap) {
       olMap.addOverlay(helpTooltipRef.current);
     }
-  }
+  };
 
-  function createMeasureTooltip() {
+  const createMeasureTooltip = () => {
     if (measureTooltipElementRef.current) {
       measureTooltipElementRef.current.parentNode.removeChild(measureTooltipElementRef.current);
     }
@@ -84,12 +116,54 @@ export default function MapComponent({ mousePositionRef }) {
     if (olMap) {
       olMap.addOverlay(measureTooltipRef.current);
     }
-  }
+  };
 
-  // Initialisation de la carte
+  // Basemap creation function
+  const createBasemapLayer = (basemapId) => {
+    const basemapConfigs = {
+      [BASEMAPS.OSM]: {
+        url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        attributions: '© OpenStreetMap contributors',
+        maxZoom: 19
+      },
+      [BASEMAPS.SATELLITE]: {
+        url: 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+        attributions: '© Google',
+        maxZoom: 20
+      },
+      [BASEMAPS.HYBRID]: {
+        url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+        attributions: '© Google',
+        maxZoom: 20
+      },
+      [BASEMAPS.TERRAIN]: {
+        url: 'http://mt0.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
+        attributions: '© Google',
+        maxZoom: 20
+      },
+      [BASEMAPS.ROADMAP]: {
+        url: 'http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+        attributions: '© Google',
+        maxZoom: 20
+      }
+    };
+
+    const config = basemapConfigs[basemapId];
+    if (!config) {
+      console.warn("Unknown basemap ID:", basemapId);
+      return null;
+    }
+
+    return new TileLayer({
+      source: new XYZ(config)
+    });
+  };
+
+  // Map initialization
   useEffect(() => {
     if (!mapRef.current || olMap) return;
-    
+
+    // Create measure layer
     measureLayerRef.current = new VectorLayer({
       source: measureSourceRef.current,
       style: new Style({
@@ -115,17 +189,11 @@ export default function MapComponent({ mousePositionRef }) {
     const newMap = new Map({
       target: mapRef.current,
       view: new View({
-        center: fromLonLat([-7.650399, 33.547345]),
-        zoom: 17,
+        center: fromLonLat(MAP_CONFIG.defaultCenter),
+        zoom: MAP_CONFIG.defaultZoom,
       }),
       layers: [
-        new TileLayer({
-          source: new XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-            attributions: '© Google',
-            maxZoom: 20,
-          }),
-        }),
+        createBasemapLayer(BASEMAPS.HYBRID),
         measureLayerRef.current
       ],
       controls: [
@@ -138,68 +206,71 @@ export default function MapComponent({ mousePositionRef }) {
         new ScaleLine(),
         new ZoomSlider(),
         new ZoomToExtent({
-          extent: fromLonLat([-7.65641, 33.54505]).concat(fromLonLat([-7.64433, 33.54986])),
+          extent: MAP_CONFIG.extent,
         })
       ]
     });
-    
+
     setOlMap(newMap);
+    console.log('Map initialized', newMap.getView().getProjection().getCode());
   }, []);
 
-  // Créer les tooltips après l'initialisation de la carte
+  // Initialize ol-cesium
+  useEffect(() => {
+    if (!olMap || ol3d) return;
+
+    if (typeof window.Cesium === 'undefined') {
+      console.error('Cesium is not loaded. Please include the Cesium script.');
+      return;
+    }
+
+    try {
+      const cesiumInstance = new OLCesium({
+        map: olMap
+      });
+
+      setOl3d(cesiumInstance);
+
+      // Configure Cesium scene
+      setTimeout(() => {
+        try {
+          const scene = cesiumInstance.getCesiumScene();
+          if (scene) {
+            // Configure scene properties
+            ['skyBox', 'sun', 'moon', 'skyAtmosphere'].forEach(prop => {
+              if (scene[prop]) scene[prop].show = true;
+            });
+
+            // Configure camera controls
+            if (scene.screenSpaceCameraController) {
+              scene.screenSpaceCameraController.enableInputs = true;
+            }
+          }
+        } catch (configError) {
+          console.warn('Cesium deferred configuration failed:', configError);
+        }
+      }, 100);
+
+    } catch (error) {
+      console.error('Error initializing ol-cesium:', error);
+    }
+  }, [olMap]);
+
+  // Initialize tooltips
   useEffect(() => {
     if (!olMap) return;
-    
     createHelpTooltip();
     createMeasureTooltip();
   }, [olMap]);
 
-  // Mise à jour du basemap
+  // Update basemap
   useEffect(() => {
     if (!olMap) return;
-    
-    let newBaseMap;
-    switch (selectedBasemap) {
-      case "osm":
-        newBaseMap = new TileLayer({
-          source: new XYZ({
-            url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          }),
-        });
-        break;
-      case "Satellite":
-        newBaseMap = new TileLayer({
-          source: new XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-          }),
-        });
-        break;
-      case "Hybrid":
-        newBaseMap = new TileLayer({
-          source: new XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-          }),
-        });
-        break;
-      case "Terrain":
-        newBaseMap = new TileLayer({
-          source: new XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
-          }),
-        });
-        break;
-      case "RoadMap":
-        newBaseMap = new TileLayer({
-          source: new XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-          }),
-        });
-        break;
-      default:
-        console.warn("Unknown basemap ID:", selectedBasemap);
-        return;
-    }
-    
+
+    const newBaseMap = createBasemapLayer(selectedBasemap);
+    if (!newBaseMap) return;
+
+    // Remove old overview control
     const controls = olMap.getControls();
     let oldOverviewControl = null;
     controls.forEach((control) => {
@@ -212,18 +283,18 @@ export default function MapComponent({ mousePositionRef }) {
       olMap.removeControl(oldOverviewControl);
     }
 
+    // Add new overview control
     const newOverview = new OverviewMap({
       layers: [newBaseMap],
     });
 
     olMap.addControl(newOverview);
-
   }, [selectedBasemap, olMap]);
 
-  // Mise à jour de la projection
+  // Update projection
   useEffect(() => {
     if (!olMap) return;
-    
+
     if (mouseControlRef.current) {
       olMap.removeControl(mouseControlRef.current);
     }
@@ -240,95 +311,45 @@ export default function MapComponent({ mousePositionRef }) {
     mouseControlRef.current = newMouseControl;
   }, [selectedProjection, olMap]);
 
-  function onBaseMapChange(id) {
+  // Event handlers
+  const onBaseMapChange = (id) => {
     if (!olMap) return;
-    
+
     const layers = olMap.getLayers();
-
     if (layers.getLength() > 0) {
-      layers.removeAt(0); 
+      layers.removeAt(0);
     }
 
-    let newBaseMap;
-    switch (id) {
-      case "osm":
-        newBaseMap = new TileLayer({
-          source: new XYZ({
-            url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            attributions: '© OpenStreetMap contributors',
-            maxZoom: 19,
-          }),
-        });
-        break;
-      case "Satellite":
-        newBaseMap = new TileLayer({
-          source: new XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-            attributions: '© Google',
-            maxZoom: 20,
-          }),
-        });
-        break;
-      case "Hybrid":
-        newBaseMap = new TileLayer({
-          source: new XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-            attributions: '© Google',
-            maxZoom: 20,
-          }),
-        });
-        break;
-      case "Terrain":
-        newBaseMap = new TileLayer({
-          source: new XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
-            attributions: '© Google',
-            maxZoom: 20,
-          }),
-        });
-        break;
-      case "RoadMap":
-        newBaseMap = new TileLayer({
-          source: new XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-            attributions: '© Google',
-            maxZoom: 20,
-          }),
-        });
-        break;
-      default:
-        console.warn("Unknown basemap ID:", id);
-        return;
+    const newBaseMap = createBasemapLayer(id);
+    if (newBaseMap) {
+      layers.insertAt(0, newBaseMap);
+      setSelectedBasemap(id);
     }
+  };
 
-    layers.insertAt(0, newBaseMap);
-    setSelectedBasemap(id);
-  }
-
-  function clearMeasurements() {
+  const clearMeasurements = () => {
     if (measureSourceRef.current) {
       measureSourceRef.current.clear();
     }
-    
+
     if (!olMap) return;
-    
+
     const overlays = olMap.getOverlays().getArray();
-    const overlaysToRemove = [];
-    
-    overlays.forEach(overlay => {
+    const overlaysToRemove = overlays.filter(overlay => {
       const element = overlay.getElement();
-      if (element && (element.className.includes('ol-tooltip-measure') || element.className.includes('ol-tooltip-static'))) {
-        overlaysToRemove.push(overlay);
-      }
+      return element && (
+        element.className.includes('ol-tooltip-measure') || 
+        element.className.includes('ol-tooltip-static')
+      );
     });
-    
+
     overlaysToRemove.forEach(overlay => {
       olMap.removeOverlay(overlay);
     });
-    
+
     createMeasureTooltip();
     createHelpTooltip();
-  }
+  };
 
   return (
     <div
@@ -341,19 +362,30 @@ export default function MapComponent({ mousePositionRef }) {
         position: "relative"
       }}
     >
-      <ModeSwitchButton />
-      <BaseMapSelector onBaseMapChange={onBaseMapChange} selectedBasemap={selectedBasemap} />
-      <ComboBox 
-        selectedProjection={selectedProjection} 
+      <ModeSwitchButton
+        ol3d={ol3d}
+        is3DMode={is3DMode}
+        setIs3DMode={setIs3DMode}
+        currentMode={is3DMode ? '3D' : '2D'}
+        olMap={olMap}
+      />
+      
+      <BaseMapSelector 
+        onBaseMapChange={onBaseMapChange} 
+        selectedBasemap={selectedBasemap} 
+      />
+      
+      <ComboBox
+        selectedProjection={selectedProjection}
         onChange={setSelectedProjection}
       />
-   
-      {/* Rendre les composants dès que olMap est disponible */}
-      {olMap && (
+
+      {/* Tools available only in 2D mode */}
+      {olMap && !is3DMode && (
         <>
-          <Tools 
-            map={olMap} 
-            measureSourceRef={measureSourceRef} 
+          <Tools
+            map={olMap}
+            measureSourceRef={measureSourceRef}
             clearMeasurements={clearMeasurements}
             helpTooltipElementRef={helpTooltipElementRef}
             helpTooltipRef={helpTooltipRef}
@@ -366,6 +398,24 @@ export default function MapComponent({ mousePositionRef }) {
         </>
       )}
 
+      {/* 3D Mode indicator */}
+      {is3DMode && (
+        <div style={{
+          position: 'absolute',
+          top: '60px',
+          right: '10px',
+          background: 'rgba(33, 150, 243, 0.9)',
+          color: 'white',
+          padding: '5px 10px',
+          borderRadius: '4px',
+          fontSize: '12px',
+          zIndex: 1000
+        }}>
+          Mode 3D actif
+        </div>
+      )}
+
+      {/* Mouse position display */}
       <Typography
         variant="caption"
         component="div"
@@ -373,7 +423,7 @@ export default function MapComponent({ mousePositionRef }) {
         sx={{
           position: "absolute",
           bottom: "-45px",
-          left: "330px", 
+          left: "330px",
           padding: "6px 14px",
           borderRadius: "8px",
           fontSize: "14px",

@@ -12,16 +12,24 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
     "@toolpad/core": "^0.14.0",
-    "framer-motion": "^12.7.4",
+    "cesium": "^1.129.0",
+    "framer-motion": "^12.9.2",
     "lucide-react": "^0.501.0",
     "ol": "^10.5.0",
+    "ol-cesium": "^2.17.0",
+    "olcs": "^2.22.1",
     "proj4": "^2.15.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-material-ui-carousel": "^3.4.2"
+    "react-fontawesome": "^1.7.1",
+    "react-intersection-observer": "^9.16.0",
+    "react-material-ui-carousel": "^3.4.2",
+    "resium": "^1.19.0-beta.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

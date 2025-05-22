@@ -137,7 +137,6 @@ export default function Tools({
       measureTooltipRef.current.setOffset([0, -7]);
       sketchRef.current = null;
       
-      createMeasureTooltip();
       
       if (listener) {
         unByKey(listener);
@@ -181,7 +180,6 @@ export default function Tools({
         aria-label="Outils de carte"
       >
         <ToolsIcon />
-        <span>Tools</span>
       </button>
       
       {toolsMenuOpen && (
