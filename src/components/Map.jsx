@@ -24,6 +24,7 @@ import ZoomToExtent from 'ol/control/ZoomToExtent.js';
 import Attribution from 'ol/control/Attribution';
 import Zoom from 'ol/control/Zoom.js';
 import MousePosition from 'ol/control/MousePosition.js';
+import Rotate from 'ol/control/Rotate.js';
 
 // ol-cesium
 import OLCesium from 'olcs';
@@ -197,6 +198,9 @@ export default function MapComponent({ mousePositionRef }) {
         measureLayerRef.current
       ],
       controls: [
+        new Rotate({
+          autoHide: false,
+        }),
         new Zoom(),
         new Attribution({
           collapsible: true,
@@ -207,7 +211,8 @@ export default function MapComponent({ mousePositionRef }) {
         new ZoomSlider(),
         new ZoomToExtent({
           extent: MAP_CONFIG.extent,
-        })
+        }),
+        
       ]
     });
 
